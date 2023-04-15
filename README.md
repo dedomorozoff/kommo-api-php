@@ -1,4 +1,4 @@
-##Kommo API PHP Wrapper
+# Kommo API PHP Wrapper
 
 Основано на
 
