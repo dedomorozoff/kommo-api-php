@@ -1782,9 +1782,10 @@ try {
 [![amoCRM API class diagram UML](./assets/amocrm-api-class-diagram-uml.png)](./assets/amocrm-api-class-diagram-uml.png)
 
 <a id="%D0%90%D0%B2%D1%82%D0%BE%D1%80"></a>
-## Автор
+## Авторы
 
 © 2019-2021 andrey-tech
+© 2023 dedomorozoff
 
 <a id="%D0%9B%D0%B8%D1%86%D0%B5%D0%BD%D0%B7%D0%B8%D1%8F"></a>
 ## Лицензия
