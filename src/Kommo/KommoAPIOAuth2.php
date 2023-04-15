@@ -1,6 +1,6 @@
 <?php
 /**
- * Трейт AmoAPIOAuth2. Содержит методы для авторизации по протоколу OAuth 2.0
+ * Трейт KommoAPIOAuth2. Содержит методы для авторизации по протоколу OAuth 2.0
  *
  * @author    andrey-tech
  * @copyright 2020 andrey-tech
@@ -23,11 +23,11 @@
 
 declare(strict_types = 1);
 
-namespace AmoCRM;
+namespace Kommo;
 
-use AmoCRM\TokenStorage\FileStorage;
+use Kommo\TokenStorage\FileStorage;
 
-trait AmoAPIOAuth2
+trait KommoAPIOAuth2
 {
     /**
      * Объект класса для сохранения токенов oAuth 2.0
@@ -92,7 +92,7 @@ trait AmoAPIOAuth2
 
             // Если нет токенов
             if (empty($tokens)) {
-                throw new AmoAPIException(
+                throw new KommoAPIException(
                     "Нет токенов для поддомена '{$subdomain}': в метод oAuth2() необходимо передать параметр authCode"
                 );
             }
@@ -104,7 +104,7 @@ trait AmoAPIOAuth2
         // Проверяем наличие всех параметров авторизации для поддомена
         foreach ([ 'client_id', 'client_secret', 'redirect_uri', 'access_token', 'refresh_token' ] as $name) {
             if (empty(self::$lastAuth[ $subdomain ][ $name ])) {
-                throw new AmoAPIException(
+                throw new KommoAPIException(
                     "Не установлен параметр авторизации oAuth2 '{$name}' для поддомена '{$subdomain}'"
                 );
             }

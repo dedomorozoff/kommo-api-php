@@ -1,42 +1,41 @@
 <?php
 /**
- * Класс AmoContact. Содержит методы для работы с контактами.
+ * Класс KommoCompany. Содерит методы для работы с компаниями.
  *
  * @author    andrey-tech
  * @copyright 2020 andrey-tech
  * @see https://github.com/andrey-tech/amocrm-api-php
  * @license   MIT
  *
- * @version 1.3.1
+ * @version 1.2.0
  *
  * v1.0.0 (24.04.2019) Начальный релиз.
- * v1.1.0 (16.05.2019) Добавлены свойства first_name, last_name
- * v1.2.0 (19.05.2020) Добавлена поддержка параметра $subdomain в конструктор
- * v1.3.0 (20.05.2020) Добавлены методы addCompany(), getPhone(), getEmail()
- * v1.3.1 (19.07.2020) Исправлен баг с типом возвращаемого значения в методе addCustomers()
+ * v1.1.0 (19.05.2020) Добавлена поддержка параметра $subdomain в конструктор
+ * v1.2.0 (20.05.2020) Добавлены методы getPhone(), getEmail()
+ *
  */
 
 declare(strict_types = 1);
 
-namespace AmoCRM;
+namespace Kommo;
 
-class AmoContact extends AmoObject
+class KommoCompany extends KommoObject
 {
     /**
      * Путь для запроса к API
      * @var string
      */
-    const URL = '/api/v2/contacts';
-
-    /**
-     * @var array
-     */
-    public $company = [];
+    const URL = '/api/v2/companies';
 
     /**
      * @var array
      */
     public $leads = [];
+
+    /**
+     * @var array
+     */
+    public $contacts = [];
 
     /**
      * @var array
@@ -47,16 +46,6 @@ class AmoContact extends AmoObject
      * @var int
      */
     public $closest_task_at;
-
-    /**
-     * @var string
-     */
-    public $first_name;
-
-    /**
-     * @var string
-     */
-    public $last_name;
 
     /**
      * Конструктор
@@ -79,13 +68,13 @@ class AmoContact extends AmoObject
         if (isset($this->closest_task_at)) {
             $params['closest_task_at'] = $this->closest_task_at;
         }
-        
-        if (count($this->company)) {
-            $params['company_id'] = $this->company['id'];
-        }
-        
+
         if (count($this->leads)) {
             $params['leads_id'] = $this->leads['id'];
+        }
+        
+        if (count($this->contacts)) {
+            $params['contacts_id'] = $this->contacts['id'];
         }
         
         if (count($this->customers)) {
@@ -96,12 +85,12 @@ class AmoContact extends AmoObject
     }
 
     /**
-     * Добавляет сделки (не более 40 сделок у 1 контакта)
+     * Добавляет задачи
      * @param array | int $leads
-     * @return AmoContact
+     * @return KommoCompany
      *
      */
-    public function addLeads($leads) :AmoContact
+    public function addLeads($leads) :KommoCompany
     {
         if (! is_array($leads)) {
             $leads = [ $leads ];
@@ -121,12 +110,37 @@ class AmoContact extends AmoObject
     }
 
     /**
-     * Добавляет покупателей
-     * @param array | int $customers
-     * @return AmoCompany
+     * Добавляет контакты
+     * @param array | int $contacts
+     * @return KommoCompany
      *
      */
-    public function addCustomers($customers) :AmoContact
+    public function addContacts($contacts) :KommoCompany
+    {
+        if (! is_array($contacts)) {
+            $contacts = [ $contacts ];
+        }
+        
+        if (isset($this->contacts['id'])) {
+            foreach ($contacts as $id) {
+                if (! in_array($id, $this->contacts['id'])) {
+                    $this->contacts['id'][] = $id;
+                }
+            }
+        } else {
+            $this->contacts['id'] = $contacts;
+        }
+
+        return $this;
+    }
+
+    /**
+     * Добавляет покупателей
+     * @param array | int $customers
+     * @return KommoCompany
+     *
+     */
+    public function addCustomers($customers) :KommoCompany
     {
         if (! is_array($customers)) {
             $customers = [ $customers ];
@@ -142,17 +156,6 @@ class AmoContact extends AmoObject
             $this->customers['id'] = $customers;
         }
 
-        return $this;
-    }
-
-    /**
-     * Добавляет компанию
-     * @param int $companyId ID компании
-     * @return AmoContact
-     */
-    public function addCompany($companyId) :AmoContact
-    {
-        $this->company = [ 'id' => $companyId ];
         return $this;
     }
 

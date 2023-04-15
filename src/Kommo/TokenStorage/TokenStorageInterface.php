@@ -17,7 +17,7 @@
 
 declare(strict_types = 1);
 
-namespace AmoCRM\TokenStorage;
+namespace Kommo\TokenStorage;
 
 interface TokenStorageInterface
 {

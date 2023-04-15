@@ -1,6 +1,6 @@
 <?php
 /**
- * Трейт AmoAPIRequest. Отправляет GET/POST запросы к API amoCRM.
+ * Трейт KommoAPIRequest. Отправляет GET/POST запросы к API amoCRM.
  *
  * @author    andrey-tech
  * @copyright 2019-2022 andrey-tech
@@ -16,7 +16,7 @@
  * v1.3.0 (05.07.2019) Добавлен параметр reAuthTimeout
  * v1.3.1 (19.08.2019) Исправлен поиск ошибок в ответе
  * v1.3.2 (02.10.2019) Исправлены сообщения об ошибках JSON
- * v1.4.0 (13.11.2019) Массив ошибок и ответов добавляется в объект AmoAPIException
+ * v1.4.0 (13.11.2019) Массив ошибок и ответов добавляется в объект KommoAPIException
  * v1.5.0 (04.04.2020) Добавлена опция cURL CURLOPT_SSLVERSION
  * v2.0.0 (07.04.2020) Добавлена авторизация по протоколу OAuth 2.0.
  *                     Параметр $throttle теперь это максимальное число запросов в секунду.
@@ -28,7 +28,7 @@
  * v2.3.0 (21.05.2020) Добавлен вывод отладочных сообщений в лог файл
  * v2.4.0 (21.05.2020) Добавлен параметр $updatedAtDelta
  * v2.5.0 (25.05.2020) Добавлена возможность вывода отладочных сообщений в STDOUT
- * v2.6.0 (26.05.2020) Добавлена блокировка сущностей при обновлении (update) методом AmoObject::save()
+ * v2.6.0 (26.05.2020) Добавлена блокировка сущностей при обновлении (update) методом KommoObject::save()
  * v2.6.1 (10.06.2020) Исправлено приведение к целому в методе throttle()
  * v2.7.0 (14.06.2020) Добавлен параметр $amoConnectTimeout
  * v2.7.1 (08.07.2020) Исправлена обработка пустого значения каталога хранения cookies. Рефакторинг
@@ -45,12 +45,12 @@
 
 declare(strict_types = 1);
 
-namespace AmoCRM;
+namespace Kommo;
 
 use DateTime;
 use DateTimeZone;
 
-trait AmoAPIRequest
+trait KommoAPIRequest
 {
     /**
      * Флаг включения вывода отладочной информации в лог файл
@@ -78,7 +78,7 @@ trait AmoAPIRequest
     public static $verifySSLCerfificate = true;
 
     /**
-     * Файл SSL-сертификатов X.509 корневых удостоверяющих центров (относительно каталога файла класса AmoAPI)
+     * Файл SSL-сертификатов X.509 корневых удостоверяющих центров (относительно каталога файла класса KommoAPI)
      * (null - файл, указанный в настройках php.ini)
      * @var string|null
      */
@@ -115,20 +115,20 @@ trait AmoAPIRequest
     public static $updatedAtDelta = 5; // Секунды
 
     /**
-     * Каталог для хранения lock файлов блокировки сущностей при обновлении (update) методом AmoObject::save()
+     * Каталог для хранения lock файлов блокировки сущностей при обновлении (update) методом KommoObject::save()
      * @var string
      */
     public static $lockEntityDir = 'lock/';
 
     /**
-     * Максимальное число попыток блокировки сущности при обновлении (update) методом AmoObject::save()
+     * Максимальное число попыток блокировки сущности при обновлении (update) методом KommoObject::save()
      * (0 - блокировка не выполняется)
      * @var int
      */
     public static $lockEntityAttempts = 10;
 
     /**
-     * Таймаут между попытками блокировки сущности при обновлении (update) методом AmoObject::save(), секунды
+     * Таймаут между попытками блокировки сущности при обновлении (update) методом KommoObject::save(), секунды
      * @var int
      */
     public static $lockEntityTimeout = 1; // Секунды
@@ -256,7 +256,7 @@ trait AmoAPIRequest
      * @param resource $curl Ресурс cURL
      * @param string $subdomain Поддомен amoCRM
      * @return void
-     * @throws AmoAPIException
+     * @throws KommoAPIException
      */
     protected static function setDefaultCurlOptions($curl, string $subdomain)
     {
@@ -300,7 +300,7 @@ trait AmoAPIRequest
      * @param array $params Параметры запроса
      * @param string|null $subdomain Поддомен amoCRM
      * @return array|null
-     * @throws AmoAPIException
+     * @throws KommoAPIException
      */
     public static function request(string $query, string $type = 'GET', array $params = [], $subdomain = null)
     {
@@ -308,13 +308,13 @@ trait AmoAPIRequest
         if (! isset($subdomain)) {
             $subdomain = self::$lastSubdomain;
             if (! isset($subdomain)) {
-                throw new AmoAPIException("Необходима авторизация auth() или oAuth2()");
+                throw new KommoAPIException("Необходима авторизация auth() или oAuth2()");
             }
         }
 
         // Проверка наличия авторизации в поддомене
         if (! isset(self::$lastAuth[ $subdomain ])) {
-            throw new AmoAPIException("Не выполнена авторизация auth() или oAuth2() для поддомена {$subdomain}");
+            throw new KommoAPIException("Не выполнена авторизация auth() или oAuth2() для поддомена {$subdomain}");
         }
 
         // Сохраняем параметры последнего запроса
@@ -357,7 +357,7 @@ trait AmoAPIRequest
                 $jsonParams = json_encode($params);
                 if ($jsonParams === false) {
                     $errorMessage = json_last_error_msg();
-                    throw new AmoAPIException(
+                    throw new KommoAPIException(
                         "Ошибка JSON-кодирования тела запроса ({$errorMessage}): " . print_r($params, true)
                     );
                 }
@@ -392,7 +392,7 @@ trait AmoAPIRequest
 
             // Допустимые методы запроса только GET, POST и AJAX
             default:
-                throw new AmoAPIException("Недопустимый метод запроса {$type}");
+                throw new KommoAPIException("Недопустимый метод запроса {$type}");
         }
 
         // Устанавливаем URL запроса
@@ -412,7 +412,7 @@ trait AmoAPIRequest
 
         // Проверяем наличие ошибки cURL
         if ($errno) {
-            throw new AmoAPIException("Oшибка cURL ({$errno}): {$error} {$requestInfo}");
+            throw new KommoAPIException("Oшибка cURL ({$errno}): {$error} {$requestInfo}");
         }
 
         // Если код статуса HTTP 401 (401 Unauthorized), то выполняем, при необходимости, повторную авторизацию
@@ -429,7 +429,7 @@ trait AmoAPIRequest
 
         // Проверяем код статуса HTTP
         if (! in_array($code, self::$successStatusCodes, true)) {
-            throw new AmoAPIException(self::getErrorMessage($code) . ": {$requestInfo} (Response: {$result})", $code);
+            throw new KommoAPIException(self::getErrorMessage($code) . ": {$requestInfo} (Response: {$result})", $code);
         }
 
         // Если код статуса HTTP 204 (204 No Content), то в ответе были переданы только заголовки без тела сообщения
@@ -441,7 +441,7 @@ trait AmoAPIRequest
         $response = json_decode(self::$lastResult, true);
         if (is_null($response)) {
             $errorMessage = json_last_error_msg();
-            throw new AmoAPIException("Ошибка JSON-декодирования тела ответа ($errorMessage): {$result}");
+            throw new KommoAPIException("Ошибка JSON-декодирования тела ответа ($errorMessage): {$result}");
         }
 
         // Проверяем наличие полей ошибок в ответе
@@ -461,10 +461,10 @@ trait AmoAPIRequest
                 $codes = array_merge($codes, array_column($errors['add'], 'code'));
             }
 
-            // Если поля кодов ошибок найдены, то сохраняем ошибки и результаты в \AmoAPIException
+            // Если поля кодов ошибок найдены, то сохраняем ошибки и результаты в \KommoAPIException
             if (count($codes)) {
                 $errorMessage = self::getErrorMessage($codes);
-                $exception = new AmoAPIException(
+                $exception = new KommoAPIException(
                     "Ошибки: {$errorMessage} {$requestInfo} (Response: {$result})",
                     reset($codes)
                 );
@@ -494,9 +494,9 @@ trait AmoAPIRequest
                 );
             }
 
-            // Если в списке сообщений об ошибках есть сообщения, сохраняем ошибки и результаты в \AmoAPIException
+            // Если в списке сообщений об ошибках есть сообщения, сохраняем ошибки и результаты в \KommoAPIException
             if (count($errorMessages)) {
-                $exception = new AmoAPIException(
+                $exception = new KommoAPIException(
                     'Ошибки (ID сущности -> сообщение об ошибке): ' .
                     implode(', ', $errorMessages) . $requestInfo . " (Response: {$result})",
                     $code
@@ -506,8 +506,8 @@ trait AmoAPIRequest
                 throw $exception;
             }
 
-            // Если неизвестные ошибки, то сохраняем ошибки и результаты в \AmoAPIException
-            $exception = new AmoAPIException("Ошибка: Неизвестная ошибка {$requestInfo} (Response: {$result})", $code);
+            // Если неизвестные ошибки, то сохраняем ошибки и результаты в \KommoAPIException
+            $exception = new KommoAPIException("Ошибка: Неизвестная ошибка {$requestInfo} (Response: {$result})", $code);
             $exception->setItems($items);
             $exception->setErrors($errors);
             throw $exception;
@@ -622,7 +622,7 @@ trait AmoAPIRequest
      * Проверяет наличие каталога для сохранения файла и создает каталог при его отсутствии рекурсивно
      * @param string $directory Полный путь к каталогу
      * @return void
-     * @throws AmoAPIException
+     * @throws KommoAPIException
      */
     protected static function checkDir(string $directory)
     {
@@ -633,7 +633,7 @@ trait AmoAPIRequest
 
         // Создаем новый каталог рекурсивно
         if (! mkdir($directory, $mode = 0755, $recursive = true) && ! is_dir($directory)) {
-            throw new AmoAPIException("Не удалось рекурсивно создать каталог: {$directory}");
+            throw new KommoAPIException("Не удалось рекурсивно создать каталог: {$directory}");
         }
     }
 
@@ -685,10 +685,10 @@ trait AmoAPIRequest
     }
 
     /**
-     * Выполняет блокировку сущности при обновлении (update) методом AmoObject::save()
-     * @param object $amoObject Объект \AmoCRM\AmoObject
+     * Выполняет блокировку сущности при обновлении (update) методом KommoObject::save()
+     * @param object $amoObject Объект \AmoCRM\KommoObject
      * @return array|null
-     * @throws AmoAPIException
+     * @throws KommoAPIException
      */
     public static function lockEntity($amoObject)
     {
@@ -711,7 +711,7 @@ trait AmoAPIRequest
 
             $fh = @fopen($file, 'c');
             if ($fh === false) {
-                throw new AmoAPIException("Не удалось открыть lock-файл {$fileName}");
+                throw new KommoAPIException("Не удалось открыть lock-файл {$fileName}");
             }
 
             if (flock($fh, LOCK_EX|LOCK_NB)) {
@@ -719,7 +719,7 @@ trait AmoAPIRequest
             }
             
             if (! fclose($fh)) {
-                throw new AmoAPIException("Не удалось закрыть lock-файл {$fileName}");
+                throw new KommoAPIException("Не удалось закрыть lock-файл {$fileName}");
             }
 
             self::debug(
@@ -737,10 +737,10 @@ trait AmoAPIRequest
     }
 
     /**
-     * Выполняет разблокировку сущности при обновлении (update) методом AmoObject::save()
+     * Выполняет разблокировку сущности при обновлении (update) методом KommoObject::save()
      * @param array|null $lock Параметры блокировки сущности
      * @return void
-     * @throws AmoAPIException
+     * @throws KommoAPIException
      */
     public static function unlockEntity($lock)
     {
@@ -749,15 +749,15 @@ trait AmoAPIRequest
         }
 
         if (! flock($lock['fh'], LOCK_UN)) {
-            throw new AmoAPIException("Не удалось разблокировать lock-файл {$lock['fileName']}");
+            throw new KommoAPIException("Не удалось разблокировать lock-файл {$lock['fileName']}");
         }
 
         if (! fclose($lock['fh'])) {
-            throw new AmoAPIException("Не удалось закрыть lock-файл {$lock['fileName']}");
+            throw new KommoAPIException("Не удалось закрыть lock-файл {$lock['fileName']}");
         }
 
         if (! @unlink($lock['file'])) {
-            throw new AmoAPIException("Не удалось удалить lock-файл {$lock['fileName']}");
+            throw new KommoAPIException("Не удалось удалить lock-файл {$lock['fileName']}");
         }
     }
 

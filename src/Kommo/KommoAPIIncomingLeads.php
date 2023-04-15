@@ -15,9 +15,9 @@
 
 declare(strict_types = 1);
 
-namespace AmoCRM;
+namespace Kommo;
 
-trait AmoAPIIncomingLeads
+trait KommoAPIIncomingLeads
 {
     /**
      * Принимает неразобранные сделки (заявки)
@@ -57,12 +57,12 @@ trait AmoAPIIncomingLeads
 
     /**
      * Сохраняет (добавляет) объекты классов-моделей сделок из неразобранного с ограничением на число сущностей в одном запросе к API amoCRM
-     * @param array|object $amoObjects Массив объектов AmoIncomingLead или объект AmoIncomingLead
+     * @param array|object $amoObjects Массив объектов KommoIncomingLead или объект KommoIncomingLead
      * @param bool $returnResponses Возвращать массив ответов сервера amoCRM вместо массива параметров сущностей
      * @param string $subdomain Поддомен amoCRM
      * @param int $limit Максимальное число сущностей в одном запросе к API amoCRM
      * @return array
-     * @throws AmoAPIException
+     * @throws KommoAPIException
      */
     public static function saveIncomingObjectsWithLimit(
         $amoObjects,
@@ -89,11 +89,11 @@ trait AmoAPIIncomingLeads
 
     /**
      * Сохраняет (добавляет) объекты классов-моделей сделок из неразобранного
-     * @param array|object $amoObjects Массив объектов AmoIncomingLead или объект AmoIncomingLead
+     * @param array|object $amoObjects Массив объектов KommoIncomingLead или объект KommoIncomingLead
      * @param bool $returnResponses Возвращать массив ответов сервера amoCRM вместо массива параметров сущностей
      * @param string $subdomain Поддомен amoCRM
      * @return array
-     * @throws AmoAPIException
+     * @throws KommoAPIException
      */
     public static function saveIncomingObjects($amoObjects, bool $returnResponses = false, $subdomain = null) :array
     {
@@ -108,9 +108,9 @@ trait AmoAPIIncomingLeads
 
         $responses = [];
         foreach ($parameters as $url => $params) {
-            $response = AmoAPI::request($url, 'POST', $params, $subdomain);
+            $response = KommoAPI::request($url, 'POST', $params, $subdomain);
             if (empty($response)) {
-                throw new AmoAPIException(
+                throw new KommoAPIException(
                     "Не удалось пакетно добавить сущности (пустой ответ) по запросу {$url}: " . print_r($params, true)
                 );
             }

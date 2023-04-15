@@ -1,6 +1,6 @@
 <?php
 /**
- * Трейт AmoAPIGetAccount. Содержит методы для получения информации об аккаунте.
+ * Трейт KommoAPIGetAccount. Содержит методы для получения информации об аккаунте.
  *
  * @author    andrey-tech
  * @copyright 2020 andrey-tech
@@ -16,13 +16,13 @@
 
 declare(strict_types = 1);
 
-namespace AmoCRM;
+namespace Kommo;
 
 /**
- * Trait AmoAPIGetAccount
+ * Trait KommoAPIGetAccount
  * @package AmoCRM
  */
-trait AmoAPIGetAccount
+trait KommoAPIGetAccount
 {
     /**
      * Возвращает информацию по аккаунту

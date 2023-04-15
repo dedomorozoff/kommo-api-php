@@ -1,6 +1,6 @@
 <?php
 /**
- * Класc AmoAPIDebugLogger. Простой логгер запросов/ответов к API amoCRM
+ * Класc KommoAPIDebugLogger. Простой логгер запросов/ответов к API amoCRM
  *
  * @author    andrey-tech
  * @copyright 2020 andrey-tech
@@ -10,15 +10,15 @@
  * @version 1.0.1
  *
  * v1.0.0 (16.08.2020) Первоначальная версия
- * v1.0.1 (17.08.2020) Удален use AmoCRM\AmoAPI
+ * v1.0.1 (17.08.2020) Удален use AmoCRM\KommoAPI
  *
  */
 
 declare(strict_types = 1);
 
-namespace AmoCRM;
+namespace Kommo;
 
-class AmoAPIDebugLogger
+class KommoAPIDebugLogger
 {
     /**
      * Лог файл для сохранения отладочной информации
@@ -40,12 +40,12 @@ class AmoAPIDebugLogger
      * Сохраняет отладочное сообщение
      * @param string $message Текст сообщения
      * @return void
-     * @throws AmoAPIException
+     * @throws KommoAPIException
      */
     public function debug(string $message)
     {
         if (! file_put_contents($this->logFile, $message, FILE_APPEND|LOCK_EX)) {
-            throw new AmoAPIException("Не удалось записать в лог файл {$this->logFile}");
+            throw new KommoAPIException("Не удалось записать в лог файл {$this->logFile}");
         }
     }
 
@@ -61,7 +61,7 @@ class AmoAPIDebugLogger
         }
 
         if (! mkdir($directory, $mode = 0755, $recursive = true)) {
-            throw new AmoAPIException("Не удалось рекурсивно создать каталог: {$directory}");
+            throw new KommoAPIException("Не удалось рекурсивно создать каталог: {$directory}");
         }
     }
 }

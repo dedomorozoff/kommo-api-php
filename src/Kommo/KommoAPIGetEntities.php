@@ -1,6 +1,6 @@
 <?php
 /**
- * Трейт AmoAPIGetEntities. Содержит методы для получения списка сущностей.
+ * Трейт KommoAPIGetEntities. Содержит методы для получения списка сущностей.
  *
  * @author    andrey-tech
  * @copyright 2020 andrey-tech
@@ -20,9 +20,9 @@
 
 declare(strict_types = 1);
 
-namespace AmoCRM;
+namespace Kommo;
 
-trait AmoAPIGetEntities
+trait KommoAPIGetEntities
 {
     /**
      * Загружает компании
@@ -30,7 +30,7 @@ trait AmoAPIGetEntities
      */
     public static function getCompanies(array $params = [], bool $returnResponse = false, $subdomain = null)
     {
-        $response = self::request(AmoCompany::URL, 'GET', $params, $subdomain);
+        $response = self::request(KommoCompany::URL, 'GET', $params, $subdomain);
         if (! $returnResponse) {
             return self::getItems($response);
         }
@@ -43,7 +43,7 @@ trait AmoAPIGetEntities
      */
     public static function getLeads(array $params = [], bool $returnResponse = false, $subdomain = null)
     {
-        $response = self::request(AmoLead::URL, 'GET', $params, $subdomain);
+        $response = self::request(KommoLead::URL, 'GET', $params, $subdomain);
         if (! $returnResponse) {
             return self::getItems($response);
         }
@@ -56,7 +56,7 @@ trait AmoAPIGetEntities
      */
     public static function getContacts(array $params = [], bool $returnResponse = false, $subdomain = null)
     {
-        $response = self::request(AmoContact::URL, 'GET', $params, $subdomain);
+        $response = self::request(KommoContact::URL, 'GET', $params, $subdomain);
         if (! $returnResponse) {
             return self::getItems($response);
         }
@@ -69,7 +69,7 @@ trait AmoAPIGetEntities
      */
     public static function getTasks(array $params = [], bool $returnResponse = false, $subdomain = null)
     {
-        $response = self::request(AmoTask::URL, 'GET', $params, $subdomain);
+        $response = self::request(KommoTask::URL, 'GET', $params, $subdomain);
         if (! $returnResponse) {
             return self::getItems($response);
         }
@@ -82,7 +82,7 @@ trait AmoAPIGetEntities
      */
     public static function getNotes(array $params = [], bool $returnResponse = false, $subdomain = null)
     {
-        $response = self::request(AmoNote::URL, 'GET', $params, $subdomain);
+        $response = self::request(KommoNote::URL, 'GET', $params, $subdomain);
         if (! $returnResponse) {
             return self::getItems($response);
         }

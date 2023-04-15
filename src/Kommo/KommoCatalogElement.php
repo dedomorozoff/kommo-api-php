@@ -1,55 +1,41 @@
 <?php
 /**
- * Класс AmoCatalog. Содерит методы для работы со списками (каталогами).
+ * Класс KommoCatalogElement. Содерит методы для работы с элементами списка (каталога).
  *
  * @author    andrey-tech
  * @copyright 2020 andrey-tech
  * @see https://github.com/andrey-tech/amocrm-api-php
  * @license   MIT
  *
- * @version 1.0.0
+ * @version 1.1.1
  *
- * v1.0.0 (25.05.2019) Начальный релиз.
+ * v1.0.0 (19.08.2019) Начальный релиз.
+ * v1.1.0 (19.05.2020) Добавлена поддержка параметра $subdomain в конструктор
+ * v1.1.1 (25.05.2020) Добавлено свойство $is_deleted
  *
  */
 
 declare(strict_types = 1);
 
-namespace AmoCRM;
+namespace Kommo;
 
-class AmoCatalog extends AmoObject
+class KommoCatalogElement extends KommoObject
 {
-
     /**
      * Путь для запроса к API
      * @var string
      */
-    const URL = '/api/v2/catalogs';
-
-    /**
-     * @var string
-     */
-    public $type;
-
-    /**
-     * @var bool
-     */
-    public $can_add_elements;
-
-    /**
-     * @var bool
-     */
-    public $can_show_in_cards;
-
-    /**
-     * @var bool
-     */
-    public $can_link_multiple;
+    const URL = '/api/v2/catalog_elements';
 
     /**
      * @var int
      */
-    public $sort;
+    public $catalog_id;
+
+    /**
+     * @var bool
+     */
+    public $is_deleted;
 
     /**
      * Конструктор
@@ -69,11 +55,15 @@ class AmoCatalog extends AmoObject
     {
         $params = [];
 
-        $properties = [ 'id', 'name', 'type', 'can_add_elements', 'can_show_in_cards', 'can_link_multiple', 'sort' ];
+        $properties = [ 'id', 'name', 'catalog_id', 'is_deleted' ];
         foreach ($properties as $property) {
             if (isset($this->$property)) {
                 $params[$property] = $this->$property;
             }
+        }
+
+        if (count($this->custom_fields)) {
+            $params['custom_fields'] = $this->custom_fields;
         }
 
         return array_merge(parent::getParams(), $params);

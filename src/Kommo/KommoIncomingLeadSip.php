@@ -1,6 +1,6 @@
 <?php
 /**
- * Класс AmoIncomingLeadSip. Содержит методы для работы с неразобранными сделками (заявками) с типом входящий звонок (sip)
+ * Класс KommoIncomingLeadSip. Содержит методы для работы с неразобранными сделками (заявками) с типом входящий звонок (sip)
  *
  * @author    andrey-tech
  * @copyright 2020 andrey-tech
@@ -15,9 +15,9 @@
 
 declare(strict_types = 1);
 
-namespace AmoCRM;
+namespace Kommo;
 
-class AmoIncomingLeadSip extends AmoIncomingLead
+class KommoIncomingLeadSip extends KommoIncomingLead
 {
     /**
      * Путь для запроса к API

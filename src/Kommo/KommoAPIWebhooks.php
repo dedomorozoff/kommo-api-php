@@ -14,9 +14,9 @@
 
 declare(strict_types = 1);
 
-namespace AmoCRM;
+namespace Kommo;
 
-trait AmoAPIWebhooks
+trait KommoAPIWebhooks
 {
     /**
      * Добавляет один webhook или несколько webhooks (не более 100)
