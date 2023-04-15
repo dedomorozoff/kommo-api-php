@@ -1,5 +1,7 @@
-#Kommo API PHP Wrapper
+##Kommo API PHP Wrapper
+
 Основано на
+
 ![amoCRM logo](./assets/amocrm-logo.png)  
 
 [![Latest Stable Version](https://poser.pugx.org/andrey-tech/amocrm-api-php/v)](//packagist.org/packages/andrey-tech/amocrm-api-php)
