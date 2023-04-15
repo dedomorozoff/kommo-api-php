@@ -11,11 +11,11 @@
 [![GitHub watchers](https://img.shields.io/github/watchers/andrey-tech/amocrm-api-php)](https://github.com/andrey-tech/amocrm-api-php/watchers)
 [![License](https://poser.pugx.org/andrey-tech/amocrm-api-php/license)](//packagist.org/packages/andrey-tech/amocrm-api-php)
 
-Простая обертка на PHP7+ для работы с REST API [amoCRM](https://www.amocrm.ru) **v2 (версии 2)** с авторизацией по протоколу oAuth 2.0
+Простая обертка на PHP8+ для работы с REST API [Kommo](https://www.kommo.com) **v2 (версии 2)** с авторизацией по протоколу oAuth 2.0
 или по API-ключу пользователя, поддержкой AJAX-запросов к frontend-методам, троттлингом запросов к API,
 блокировкой одновременного обновления одной сущности и логированием запросов/ответов к API в файл.
 
-Данная библиотека была создана для удовлетворения
+Данная библиотека была создана на основе библиотеки [amocrm-api-php](https://github.com/andrey-tech/amocrm-api-php) для работы в англоязычной версии AmoCRM, которая сейчас называется Kommo и с поддержкой
 [новых требований amoCRM](https://www.amocrm.ru/developers/content/integrations/requirements),
 предъявляемых к публичным интеграциям:
 > Публичные интеграции должны использовать механизм авторизации oAuth 2.0,
@@ -118,7 +118,7 @@
 <a id="%D0%A2%D1%80%D0%B5%D0%B1%D0%BE%D0%B2%D0%B0%D0%BD%D0%B8%D1%8F"></a>
 ## Требования
 
-- PHP >= 7.0.
+- PHP >= 8.0.
 - Произвольный автозагрузчик классов, реализующий стандарт [PSR-4](https://www.php-fig.org/psr/psr-4/).
 
 <a id="%D0%A3%D1%81%D1%82%D0%B0%D0%BD%D0%BE%D0%B2%D0%BA%D0%B0"></a>
@@ -126,13 +126,13 @@
 
 Установка через composer:
 ```
-$ composer require andrey-tech/amocrm-api-php:"^2.7"
+$ composer require dedomorozoff/kommo-api-php
 ```
 
 или путем добавления:
 
 ```
-"andrey-tech/amocrm-api-php": "^2.7"
+"andrey-tech/amocrm-api-php": "^1.0"
 ```
 
 в секцию require файла composer.json.
@@ -143,7 +143,7 @@ $ composer require andrey-tech/amocrm-api-php:"^2.7"
 <a id="%D0%90%D0%B2%D1%82%D0%BE%D1%80%D0%B8%D0%B7%D0%B0%D1%86%D0%B8%D1%8F-%D0%BF%D0%BE-%D0%BF%D1%80%D0%BE%D1%82%D0%BE%D0%BA%D0%BE%D0%BB%D1%83-oauth-20-%D0%B0%D0%BA%D1%82%D1%83%D0%B0%D0%BB%D1%8C%D0%BD%D1%8B%D0%B9-%D0%BC%D0%B5%D1%82%D0%BE%D0%B4"></a>
 ### Авторизация по протоколу oAuth 2.0 ([актуальный метод](https://www.amocrm.ru/developers/content/oauth/oauth))
 
-- `static AmoAPI::oAuth2(string $subdomain, string $clientId, string $clientSecret, string $redirectUri, string $authCode = null) :array`  
+- `static KommoAPI::oAuth2(string $subdomain, string $clientId, string $clientSecret, string $redirectUri, string $authCode = null) :array`  
     - `$subdomain` - поддомен или полный домен amoCRM;
     - `$clientId` - ID интеграции;
     - `$clientSecret` - секрет интеграции;
@@ -213,12 +213,12 @@ try {
 <a id="%D0%A5%D1%80%D0%B0%D0%BD%D0%B5%D0%BD%D0%B8%D0%B5-access-%D0%B8-refresh-%D1%82%D0%BE%D0%BA%D0%B5%D0%BD%D0%BE%D0%B2"></a>
 #### Хранение access и refresh токенов
 
-Сохранение и загрузка токенов выполняется с помощью классов, реализующих интерфейс `\AmoCRM\TokenStorage\TokenStorageInterface`.
+Сохранение и загрузка токенов выполняется с помощью классов, реализующих интерфейс `\KommoCRM\TokenStorage\TokenStorageInterface`.
 
 <a id="%D0%98%D0%BD%D1%82%D0%B5%D1%80%D1%84%D0%B5%D0%B9%D1%81-tokenstorageinterface"></a>
 ##### Интерфейс `TokenStorageInterface`
 
-В интерфейсе `\AmoCRM\TokenStorage\TokenStorageInterface` определены три метода:
+В интерфейсе `\KommoCRM\TokenStorage\TokenStorageInterface` определены три метода:
 
 - `save(array $tokens, string $domain) :void` Сохраняет параметры авторизации и токены.
     * `$tokens` - ассоциативный массив параметров авторизации и токенов:  
@@ -233,8 +233,8 @@ try {
 <a id="%D0%9A%D0%BB%D0%B0%D1%81%D1%81-filestorage"></a>
 ##### Класс `FileStorage`
 
-По умолчанию для сохранения и загрузки токенов используется класс `\AmoCRM\TokenStorage\FileStorage`,
-реализующий интерфейс `\AmoCRM\TokenStorage\TokenStorageInterface`.
+По умолчанию для сохранения и загрузки токенов используется класс `\KommoCRM\TokenStorage\FileStorage`,
+реализующий интерфейс `\KommoCRM\TokenStorage\TokenStorageInterface`.
 Класс хранит токены в JSON-файлах, с именами, соответствующими именам доменов amoCRM (например, `testsubdomain.amocrm.ru.json`).  
 
 В параметрах, передаваемых конструктору класса, можно указать каталог для хранения файлов токенов:
@@ -243,7 +243,7 @@ try {
     * `$storageFolder` - каталог для хранения файлов токенов. Может быть задан абсолютный путь
 или путь относительно текущего рабочего каталога. Если передана пустая строка, то создается каталог по умолчанию - 'tokens'. 
 
-При возникновении ошибок выбрасывается исключение класса `\AmoCRM\TokenStorage\TokenStorageException`. 
+При возникновении ошибок выбрасывается исключение класса `\KommoCRM\TokenStorage\TokenStorageException`. 
 
 <a id="%D0%98%D1%81%D0%BF%D0%BE%D0%BB%D1%8C%D0%B7%D0%BE%D0%B2%D0%B0%D0%BD%D0%B8%D0%B5-%D1%81%D0%BE%D0%B1%D1%81%D1%82%D0%B2%D0%B5%D0%BD%D0%BD%D0%BE%D0%B3%D0%BE-%D0%BA%D0%BB%D0%B0%D1%81%D1%81%D0%B0-%D0%B4%D0%BB%D1%8F-%D1%81%D0%BE%D1%85%D1%80%D0%B0%D0%BD%D0%B5%D0%BD%D0%B8%D1%8F-%D1%82%D0%BE%D0%BA%D0%B5%D0%BD%D0%BE%D0%B2"></a>
 ##### Использование собственного класса для сохранения токенов
@@ -276,7 +276,7 @@ try {
 }
 ```
 
-Пример класса `\AmoCRM\TokenStorage\DatabaseStorage`:
+Пример класса `\KommoCRM\TokenStorage\DatabaseStorage`:
 
 ```php
 <?php
@@ -322,7 +322,7 @@ class DatabaseStorage implements TokenStorageInterface
 #### Проверка наличия первичной авторизации
 
 Чтобы проверить, происходила ли первичная авторизация для нужного поддомена amoCRM,
-можно воспользоваться методом hasTokens() интерфейса `\AmoCRM\TokenStorage\TokenStorageInterface`:
+можно воспользоваться методом hasTokens() интерфейса `\KommoCRM\TokenStorage\TokenStorageInterface`:
 
 ```php
 use Kommo\{KommoAPI, KommoAPIException};
@@ -362,7 +362,7 @@ try {
 
 С 1 июля 2020 г. информация о API-ключе пользователя стала недоступна в интерфейсе amoCRM.
 
-- `static AmoAPI::oauth(string $login, string $hash, string $subdomain) :array`
+- `static KommoAPI::oauth(string $login, string $hash, string $subdomain) :array`
     - `$login` - логин пользователя;
     - `$hash` - API-ключ пользователя;
     - `$subdomain` - поддомен или полный домен amoCRM.
@@ -418,7 +418,7 @@ try {
 <a id="%D0%9F%D0%B0%D1%80%D0%B0%D0%BC%D0%B5%D1%82%D1%80%D1%8B-%D0%BD%D0%B0%D1%81%D1%82%D1%80%D0%BE%D0%B9%D0%BA%D0%B8"></a>
 ## Параметры настройки
 
-Все параметры настройки библиотеки устанавливаются через статические свойства класса `AmoAPI`.
+Все параметры настройки библиотеки устанавливаются через статические свойства класса `KommoAPI`.
 
 | Свойство                | По умолчанию            | Описание                                                                                                                                                                                               |
 |-------------------------|-------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
@@ -434,9 +434,9 @@ try {
 | `$reAuthTimeout`        | 5                       | Устанавливает таймаут перед повторной авторизацией по API-ключу пользователя при ответе сервера '401 Unauthorized', секунды                                                                            |
 | `$reAuthAttempts`       | 3                       | Устанавливает максимальное число попыток повторной авторизации по API-ключу пользователя при ответе сервера '401 Unauthorized'                                                                         |
 | `$cookieFileDir`        | 'cookies/'              | Устанавливает относительный каталог для хранения файлов cookie                                                                                                                                         |
-| `$lockEntityDir`        | 'lock/'                 | Устанавливает каталог для хранения lock-файлов блокировки обновления сущностей при вызове метода `AmoObject::save()`                                                                                   |
-| `$lockEntityAttempts`   | 10                      | Устанавливает максимальное число попыток блокировки обновления сущности при вызове метода `AmoObject::save()` (0 - блокировка не выполняется)                                                          |
-| `$lockEntityTimeout`    | 1                       | Устанавливает таймаут между попытками блокировки обновления сущности при вызове метода `AmoObject::save()`, секунды                                                                                    |
+| `$lockEntityDir`        | 'lock/'                 | Устанавливает каталог для хранения lock-файлов блокировки обновления сущностей при вызове метода `KommoObject::save()`                                                                                   |
+| `$lockEntityAttempts`   | 10                      | Устанавливает максимальное число попыток блокировки обновления сущности при вызове метода `KommoObject::save()` (0 - блокировка не выполняется)                                                          |
+| `$lockEntityTimeout`    | 1                       | Устанавливает таймаут между попытками блокировки обновления сущности при вызове метода `KommoObject::save()`, секунды                                                                                    |
 | `$limitRows`            | 500                     | Устанавливает максимальное количество сущностей, выбираемых за один запрос к серверу amoCRM ([не более 500, рекомендуется не более 250](https://www.amocrm.ru/developers/content/api/recommendations)) |
 | `$tokenStorage`         | object                  | Устанавливает объект класса, обеспечивающего сохранение токенов oAuth 2.0 и реализующего интерфейс `TokenStorageInterface`. По умолчанию объект класса `FileStorage`                                   |
 | `$successStatusCodes`   | `[ 200, 202, 204 ]`     | Коды состояния НТТР, соответствующие успешному выполнению запроса                                                                                                                                      |
@@ -447,31 +447,31 @@ try {
 Работа с сущностями amoCRM строится с помощью:
 
 - методов классов-моделей:
-    - `AmoContact` - модель контакта;
-    - `AmoCompany` - модель компании;
-    - `AmoLead` - модель сделки;
-    - `AmoNote` - модель события (примечания);
-    - `AmoTask` - модель задачи;
-    - `AmoCatalog` - модель списка (каталога);
-    - `AmoCatalogElement` - модель элемента списка (каталога);
-    - `AmoIncomingLead` - абстрактная базовая модель заявки из неразобранного;
-    - `AmoIncomingLeadForm` - модель заявки из неразобранного при добавлении заявки из веб-формы;
-    - `AmoIncomingLeadSip` - модель заявки из неразобранного с типом входящий звонок.
-- дополнительных статических методов класса `AmoAPI`;
+    - `KommoContact` - модель контакта;
+    - `KommoCompany` - модель компании;
+    - `KommoLead` - модель сделки;
+    - `KommoNote` - модель события (примечания);
+    - `KommoTask` - модель задачи;
+    - `KommoCatalog` - модель списка (каталога);
+    - `KommoCatalogElement` - модель элемента списка (каталога);
+    - `KommoIncomingLead` - абстрактная базовая модель заявки из неразобранного;
+    - `KommoIncomingLeadForm` - модель заявки из неразобранного при добавлении заявки из веб-формы;
+    - `KommoIncomingLeadSip` - модель заявки из неразобранного с типом входящий звонок.
+- дополнительных статических методов класса `KommoAPI`;
 - параметров моделей, доступных через публичные свойства объектов классов-моделей.
 
 <a id="%D0%A1%D0%BF%D0%B8%D1%81%D0%BE%D0%BA-%D0%BC%D0%B5%D1%82%D0%BE%D0%B4%D0%BE%D0%B2-%D0%B8-%D0%BA%D0%BE%D0%BD%D1%81%D1%82%D0%B0%D0%BD%D1%82-%D0%BC%D0%BE%D0%B4%D0%B5%D0%BB%D0%B5%D0%B9"></a>
 ### Список методов и констант моделей
 
 <a id="%D0%91%D0%B0%D0%B7%D0%BE%D0%B2%D1%8B%D0%B9-%D0%BA%D0%BB%D0%B0%D1%81%D1%81-%D0%BC%D0%BE%D0%B4%D0%B5%D0%BB%D0%B5%D0%B9-amoobject"></a>
-#### Базовый класс моделей `AmoObject`
+#### Базовый класс моделей `KommoObject`
 
-Абстрактный базовый класс всех моделей - `AmoObject` содержит следующие общие методы:
+Абстрактный базовый класс всех моделей - `KommoObject` содержит следующие общие методы:
 
 - `__construct(array $params = [], string $subdomain = null)` Создает новый объект модели и заполняет ее.
     + `$params` - параметры модели;
     + `$subdomain` - поддомен или полный домен amoCRM. Если null, то используется поддомен последней авторизации.
-- `fillById(int|string $id, array $params = []) :AmoObject` Заполняет модель данными по ID сущности.
+- `fillById(int|string $id, array $params = []) :KommoObject` Заполняет модель данными по ID сущности.
     + `$id` - ID сущности;
     + `$params` - дополнительные параметры, передаваемые в GET-запросе к amoCRM.
 - `getParams() :array` Возвращает все параметры модели.
@@ -481,11 +481,11 @@ try {
     + `$i` - ID поля;
     + `$returnFirst` - вернуть только первое значение из списка значений;
     + `$returnValue` - имя параметра, значение которого возвращается (`value`, `enum`, `subtype`).
-- `setCustomFields(array $params) :AmoObject` Устанавливает значения дополнительных полей.
+- `setCustomFields(array $params) :KommoObject` Устанавливает значения дополнительных полей.
     + `$params` - массив значений дополнительных полей.
-- `addTags(array|string $tags) :AmoObject` Добавляет теги.
+- `addTags(array|string $tags) :KommoObject` Добавляет теги.
     + `$tags` - тег или массив тегов.
-- `delTags(array|string $tags) :AmoObject` Удаляет теги. 
+- `delTags(array|string $tags) :KommoObject` Удаляет теги. 
     + `$tags` - тег или массив тегов.
 - `save(bool $returnResponse = false)` Сохраняет объект модели в amoCRM и возвращает ID сущности. 
     + `$returnResponse` - вернуть ответ сервера вместо ID сущности.
@@ -499,7 +499,7 @@ try {
 - `CUSTOMER_TYPE = 12` - покупатель.
 
 <a id="%D0%9A%D0%BB%D0%B0%D1%81%D1%81-amocontact---%D0%BC%D0%BE%D0%B4%D0%B5%D0%BB%D1%8C-%D0%BA%D0%BE%D0%BD%D1%82%D0%B0%D0%BA%D1%82%D0%B0"></a>
-#### Класс `AmoContact` - модель контакта
+#### Класс `KommoContact` - модель контакта
 
 - `addLeads(array|int $id)` Привязывает сделки по ID.
 - `addCustomers(array|int $id)` Привязывает покупателей по ID.
@@ -508,7 +508,7 @@ try {
 - `getEmail()` Возвращает первый e-mail контакта.
 
 <a id="%D0%9A%D0%BB%D0%B0%D1%81%D1%81-amocompany---%D0%BC%D0%BE%D0%B4%D0%B5%D0%BB%D1%8C-%D0%BA%D0%BE%D0%BC%D0%BF%D0%B0%D0%BD%D0%B8%D0%B8"></a>
-#### Класс `AmoCompany` - модель компании
+#### Класс `KommoCompany` - модель компании
 
 - `addLeads(array|int $id)` Привязывает сделки по ID.
 - `addContacts(array|int $id)` Привязывает контакты по ID.
@@ -517,7 +517,7 @@ try {
 - `getEmail()` Возвращает первый e-mail компании.
 
 <a id="%D0%9A%D0%BB%D0%B0%D1%81%D1%81-amolead---%D0%BC%D0%BE%D0%B4%D0%B5%D0%BB%D1%8C-%D1%81%D0%B4%D0%B5%D0%BB%D0%BA%D0%B8"></a>
-#### Класс `AmoLead` - модель сделки
+#### Класс `KommoLead` - модель сделки
 
 ⚠ &nbsp; Для заявок из неразобранного существуют [специальные методы](#%D0%9A%D0%BB%D0%B0%D1%81%D1%81-amoincominglead---%D0%B1%D0%B0%D0%B7%D0%BE%D0%B2%D0%B0%D1%8F-%D0%BC%D0%BE%D0%B4%D0%B5%D0%BB%D1%8C-%D0%B7%D0%B0%D1%8F%D0%B2%D0%BA%D0%B8-%D0%B8%D0%B7-%D0%BD%D0%B5%D1%80%D0%B0%D0%B7%D0%BE%D0%B1%D1%80%D0%B0%D0%BD%D0%BD%D0%BE%D0%B3%D0%BE).
 
@@ -528,7 +528,7 @@ try {
 - `setCatalogElements(array $catalogElements)` Устанавливает элементы списков (каталогов) по ID списков.
 
 <a id="%D0%9A%D0%BB%D0%B0%D1%81%D1%81-amotask---%D0%BC%D0%BE%D0%B4%D0%B5%D0%BB%D1%8C-%D0%B7%D0%B0%D0%B4%D0%B0%D1%87%D0%B8"></a>
-#### Класс `AmoTask` - модель задачи
+#### Класс `KommoTask` - модель задачи
 
 - `addContact(int $id)` Привязывает контакт по ID.
 - `addLead(int $id)` Привязывает сделку по ID.
@@ -540,7 +540,7 @@ try {
 - `MAIL_TASKTYPE = 3` - написать письмо.
 
 <a id="%D0%9A%D0%BB%D0%B0%D1%81%D1%81-amonote---%D0%BC%D0%BE%D0%B4%D0%B5%D0%BB%D1%8C-%D1%81%D0%BE%D0%B1%D1%8B%D1%82%D0%B8%D1%8F-%D0%BF%D1%80%D0%B8%D0%BC%D0%B5%D1%87%D0%B0%D0%BD%D0%B8%D1%8F"></a>
-#### Класс `AmoNote` - модель события (примечания)
+#### Класс `KommoNote` - модель события (примечания)
 
 Константы класса, определяющие типы событий:
 
@@ -555,23 +555,23 @@ try {
 - `SMS_OUT_NOTETYPE = 103` - исходящее SMS сообщение.
 
 <a id="%D0%9A%D0%BB%D0%B0%D1%81%D1%81-amocatalog---%D0%BC%D0%BE%D0%B4%D0%B5%D0%BB%D1%8C-%D1%81%D0%BF%D0%B8%D1%81%D0%BA%D0%B0-%D0%BA%D0%B0%D1%82%D0%B0%D0%BB%D0%BE%D0%B3%D0%B0"></a>
-#### Класс `AmoCatalog` - модель списка (каталога)
+#### Класс `KommoCatalog` - модель списка (каталога)
 
-Класс `AmoCatalog` не имеет собственных специфических методов.
+Класс `KommoCatalog` не имеет собственных специфических методов.
 
 <a id="%D0%9A%D0%BB%D0%B0%D1%81%D1%81-amocatalogelement---%D0%BC%D0%BE%D0%B4%D0%B5%D0%BB%D1%8C-%D1%8D%D0%BB%D0%B5%D0%BC%D0%B5%D0%BD%D1%82%D0%B0-%D1%81%D0%BF%D0%B8%D1%81%D0%BA%D0%B0-%D0%BA%D0%B0%D1%82%D0%B0%D0%BB%D0%BE%D0%B3%D0%B0"></a>
-#### Класс `AmoCatalogElement` - модель элемента списка (каталога)
+#### Класс `KommoCatalogElement` - модель элемента списка (каталога)
 
-Класс `AmoCatalogElement` не имеет собственных специфических методов.
+Класс `KommoCatalogElement` не имеет собственных специфических методов.
 
 <a id="%D0%9A%D0%BB%D0%B0%D1%81%D1%81-amoincominglead---%D0%B1%D0%B0%D0%B7%D0%BE%D0%B2%D0%B0%D1%8F-%D0%BC%D0%BE%D0%B4%D0%B5%D0%BB%D1%8C-%D0%B7%D0%B0%D1%8F%D0%B2%D0%BA%D0%B8-%D0%B8%D0%B7-%D0%BD%D0%B5%D1%80%D0%B0%D0%B7%D0%BE%D0%B1%D1%80%D0%B0%D0%BD%D0%BD%D0%BE%D0%B3%D0%BE"></a>
-#### Класс `AmoIncomingLead` - базовая модель заявки из неразобранного
+#### Класс `KommoIncomingLead` - базовая модель заявки из неразобранного
 
 Работа с заявками из неразобранного существенно отличается от работы с другими сущностями amoCRM.  
 Согласно официальной документации:
 > Изначально неразобранное было в отдельном хранилище и являлось отдельной сущностью именно поэтому до сих пор в интерфейсах amoCRM и в API есть особенности которые отличают поведение сделки в статусе Неразобранное от сделок в других статусах.
 
-⚠ &nbsp; Поэтому для моделей заявок из неразобранного не работают следующие методы класса `AmoObject`:
+⚠ &nbsp; Поэтому для моделей заявок из неразобранного не работают следующие методы класса `KommoObject`:
 
 - `fillById()`;
 - `getCustomFields()`;
@@ -579,44 +579,44 @@ try {
 - `setCustomFields()`;
 - `addTags()`;
 - `delTags()`;
-- `AmoAPI::saveObjects()`;
-- `AmoAPI::saveObjectsWithLimit()`.
+- `KommoAPI::saveObjects()`;
+- `KommoAPI::saveObjectsWithLimit()`.
 
 <a id="%D0%9E%D0%B1%D1%89%D0%B8%D0%B5-%D0%BC%D0%B5%D1%82%D0%BE%D0%B4%D1%8B-%D0%B4%D0%BB%D1%8F-%D1%80%D0%B0%D0%B1%D0%BE%D1%82%D1%8B-%D1%81-%D0%B7%D0%B0%D1%8F%D0%B2%D0%BA%D0%B0%D0%BC%D0%B8-%D0%B8%D0%B7-%D0%BD%D0%B5%D1%80%D0%B0%D0%B7%D0%BE%D0%B1%D1%80%D0%B0%D0%BD%D0%BD%D0%BE%D0%B3%D0%BE"></a>
 ##### Общие методы для работы с заявками из неразобранного
 
-Абстрактный базовый класс модели заявки из неразобранного - `AmoIncomingLead` содержит следующие методы:
+Абстрактный базовый класс модели заявки из неразобранного - `KommoIncomingLead` содержит следующие методы:
 
-- `fillByUid(int|string $uid, array $params = []) :AmoObject` Заполняет модель заявки данными по UID заявки.
+- `fillByUid(int|string $uid, array $params = []) :KommoObject` Заполняет модель заявки данными по UID заявки.
     + `$uid` - UID сущности;
     + `$params` - дополнительные параметры, передаваемые в GET-запросе к amoCRM.
-- `setIncomingLeadInfo(array $params) :AmoIncomingLead` Устанавливает параметры заявки из неразобранного.
+- `setIncomingLeadInfo(array $params) :KommoIncomingLead` Устанавливает параметры заявки из неразобранного.
     + `$params` - параметры неразобранного.
-- `addIncomingLead(AmoLead|array $lead) :AmoIncomingLeadSip` Добавляет параметры сделки.
-    + `$lead` - объект класса `AmoLead` или массив параметров сделки.
-- `addIncomingContact(AmoContact|array $contact) :AmoIncomingLead` Добавляет параметры контакта.
-    + `$contact` - объект класса `AmoContact` или массив параметров контакта.
-- `addIncomingCompany(AmoCompany|array $company) :AmoIncomingLead` Добавляет параметры компании.
-    + `$company` - объект класса `AmoCompany` или массив параметров компании.
+- `addIncomingLead(KommoLead|array $lead) :KommoIncomingLeadSip` Добавляет параметры сделки.
+    + `$lead` - объект класса `KommoLead` или массив параметров сделки.
+- `addIncomingContact(KommoContact|array $contact) :KommoIncomingLead` Добавляет параметры контакта.
+    + `$contact` - объект класса `KommoContact` или массив параметров контакта.
+- `addIncomingCompany(KommoCompany|array $company) :KommoIncomingLead` Добавляет параметры компании.
+    + `$company` - объект класса `KommoCompany` или массив параметров компании.
 - `save(bool $returnResponse = false)` Добавляет новую заявку в неразобранное и возвращает массив, содержащий UID заявки.
     + `$returnResponse` - вернуть ответ сервера вместо UID.
 
-Статические методы для пакетного добавления заявок в amoCRM, а также для принятия или отклонения неразобранных заявок находятся в классе `AmoAPI`.
+Статические методы для пакетного добавления заявок в amoCRM, а также для принятия или отклонения неразобранных заявок находятся в классе `KommoAPI`.
 
 <a id="%D0%9A%D0%BB%D0%B0%D1%81%D1%81-amoincomingleadform---%D0%BC%D0%BE%D0%B4%D0%B5%D0%BB%D1%8C-%D0%B7%D0%B0%D1%8F%D0%B2%D0%BA%D0%B8-%D0%B8%D0%B7-%D0%BD%D0%B5%D1%80%D0%B0%D0%B7%D0%BE%D0%B1%D1%80%D0%B0%D0%BD%D0%BD%D0%BE%D0%B3%D0%BE-%D0%BF%D1%80%D0%B8-%D0%B4%D0%BE%D0%B1%D0%B0%D0%B2%D0%BB%D0%B5%D0%BD%D0%B8%D0%B8-%D0%B8%D0%B7-%D0%B2%D0%B5%D0%B1-%D1%84%D0%BE%D1%80%D0%BC%D1%8B"></a>
-##### Класс `AmoIncomingLeadForm` - модель заявки из неразобранного при добавлении из веб-формы
+##### Класс `KommoIncomingLeadForm` - модель заявки из неразобранного при добавлении из веб-формы
 
-Дочерний класс `AmoIncomingLeadForm` не имеет собственных специфических методов.
+Дочерний класс `KommoIncomingLeadForm` не имеет собственных специфических методов.
 
 <a id="%D0%9A%D0%BB%D0%B0%D1%81%D1%81-amoincomingleadsip---%D0%BC%D0%BE%D0%B4%D0%B5%D0%BB%D1%8C-%D0%B7%D0%B0%D1%8F%D0%B2%D0%BA%D0%B8-%D0%B8%D0%B7-%D0%BD%D0%B5%D1%80%D0%B0%D0%B7%D0%BE%D0%B1%D1%80%D0%B0%D0%BD%D0%BD%D0%BE%D0%B3%D0%BE-%D1%81-%D1%82%D0%B8%D0%BF%D0%BE%D0%BC-%D0%B2%D1%85%D0%BE%D0%B4%D1%8F%D1%89%D0%B8%D0%B9-%D0%B7%D0%B2%D0%BE%D0%BD%D0%BE%D0%BA"></a>
-##### Класс `AmoIncomingLeadSip` - модель заявки из неразобранного с типом входящий звонок
+##### Класс `KommoIncomingLeadSip` - модель заявки из неразобранного с типом входящий звонок
 
-Дочерний класс `AmoIncomingLeadSip` не имеет собственных специфических методов.
+Дочерний класс `KommoIncomingLeadSip` не имеет собственных специфических методов.
 
 <a id="%D0%9C%D0%B5%D1%82%D0%BE%D0%B4%D1%8B-%D0%B4%D0%BB%D1%8F-%D0%B7%D0%B0%D0%B3%D1%80%D1%83%D0%B7%D0%BA%D0%B8-%D1%81%D1%83%D1%89%D0%BD%D0%BE%D1%81%D1%82%D0%B5%D0%B9"></a>
 ### Методы для загрузки сущностей
 
-Класс `AmoAPI` содержит следующие общие статические методы для загрузки сущностей:
+Класс `KommoAPI` содержит следующие общие статические методы для загрузки сущностей:
 
 - `static getAll<Entities> (array $params, bool $returnResponse = false, string $subdomain = null) :\Generator`
     Загружает ВСЕ сущности заданного типа <Entities\> c возможностью фильтрации.  
@@ -656,7 +656,7 @@ try {
 <a id="%D0%9C%D0%B5%D1%82%D0%BE%D0%B4%D1%8B-%D0%B4%D0%BB%D1%8F-%D0%BF%D0%B0%D0%BA%D0%B5%D1%82%D0%BD%D0%BE%D0%B3%D0%BE-%D1%81%D0%BE%D1%85%D1%80%D0%B0%D0%BD%D0%B5%D0%BD%D0%B8%D1%8F-%D1%81%D1%83%D1%89%D0%BD%D0%BE%D1%81%D1%82%D0%B5%D0%B9"></a>
 ### Методы для пакетного сохранения сущностей
 
-Класс `AmoAPI` содержит статические методы для пакетного сохранения (добавления или обновления) за один запрос до 500
+Класс `KommoAPI` содержит статические методы для пакетного сохранения (добавления или обновления) за один запрос до 500
 сущностей различного типа для одного поддомена amoCRM.
 
 Согласно [официальной документации](https://www.amocrm.ru/developers/content/api/recommendations):
@@ -664,12 +664,12 @@ try {
 
 - `static saveObjects(array $amoObjects, bool $returnResponses = false, string $subdomain = null) :array`  
     Добавляет или обновляет сущности в amoCRM. Возвращает массив параметров сущностей.
-    - `$amoObjects` Массив объектов классов-моделей (не более 500 объектов одного типа): `AmoContact`, `AmoCompany`,...;
+    - `$amoObjects` Массив объектов классов-моделей (не более 500 объектов одного типа): `KommoContact`, `KommoCompany`,...;
     - `$returnResponses` - возвращать массив ответов сервера amoCRM вместо массива параметров сущностей;
     - `$subdomain` - поддомен или полный домен amoCRM. Если null, то используется поддомен последней выполненной авторизации.
 - `static saveObjectsWithLimit(array $amoObjects, bool $returnResponses = false, string $subdomain = null, $limit = 250) :array`  
     Добавляет или обновляет сущности в amoCRM с ограничением на число сущностей в одном запросе к API. Возвращает массив параметров сущностей.
-    - `$amoObjects` Массив объектов классов-моделей: `AmoContact`, `AmoCompany`,...;
+    - `$amoObjects` Массив объектов классов-моделей: `KommoContact`, `KommoCompany`,...;
     - `$returnResponses` - возвращать массив ответов сервера amoCRM вместо массива параметров сущностей;
     - `$subdomain` - поддомен или полный домен amoCRM. Если null, то используется поддомен последней выполненной авторизации;
     - `$limit` - максимальное число сущностей в одном запросе к API.
@@ -678,18 +678,18 @@ try {
 <a id="%D0%9C%D0%B5%D1%82%D0%BE%D0%B4%D1%8B-%D0%B4%D0%BB%D1%8F-%D0%BF%D0%B0%D0%BA%D0%B5%D1%82%D0%BD%D0%BE%D0%B3%D0%BE-%D1%83%D0%B4%D0%B0%D0%BB%D0%B5%D0%BD%D0%B8%D1%8F-%D1%81%D1%83%D1%89%D0%BD%D0%BE%D1%81%D1%82%D0%B5%D0%B9"></a>
 ### Методы для пакетного удаления сущностей
 
-Класс `AmoAPI` содержит статический метод для пакетного удаления списков и элементов списков:
+Класс `KommoAPI` содержит статический метод для пакетного удаления списков и элементов списков:
 
 - `static delteObjects(array $amoObjects, bool $returnResponses = false, string $subdomain = null) :array`  
     Удаляет сущности в amoCRM. Возвращает пустой массив параметров сущностей.
-    - `$amoObjects` Массив объектов классов-моделей: `AmoCatalog` или `AmoCatalogElement`;
+    - `$amoObjects` Массив объектов классов-моделей: `KommoCatalog` или `KommoCatalogElement`;
     - `$returnResponses` - возвращать массив ответов сервера amoCRM вместо пустого массива параметров сущностей;
     - `$subdomain` - поддомен или полный домен amoCRM. Если null, то используется поддомен последней выполненной авторизации.
 
 <a id="%D0%9C%D0%B5%D1%82%D0%BE%D0%B4%D1%8B-%D0%B4%D0%BB%D1%8F-webhooks"></a>
 ### Методы для webhooks
 
-Класс `AmoAPI` содержит статические методы для добавления и удаления webhooks:
+Класс `KommoAPI` содержит статические методы для добавления и удаления webhooks:
 
 - `static addWebhooks(array $params, bool $returnResponse = false, string $subdomain = null) :array`  
     Добавляет один webhook или несколько webhooks (не более 100).
@@ -705,16 +705,16 @@ try {
 <a id="%D0%9C%D0%B5%D1%82%D0%BE%D0%B4%D1%8B-%D0%B4%D0%BB%D1%8F-%D0%BD%D0%B5%D1%80%D0%B0%D0%B7%D0%BE%D0%B1%D1%80%D0%B0%D0%BD%D0%BD%D0%BE%D0%B3%D0%BE"></a>
 ### Методы для неразобранного
 
-Класс `AmoAPI` содержит следующие статические методы для работы с заявками из неразобранного:
+Класс `KommoAPI` содержит следующие статические методы для работы с заявками из неразобранного:
 
-- `static saveIncomingObjects(AmoIncomingLeadForm|AmoIncomingLeadSip|array $amoObjects, bool $returnResponses = false, string $subdomain = null) :array`  
+- `static saveIncomingObjects(KommoIncomingLeadForm|KommoIncomingLeadSip|array $amoObjects, bool $returnResponses = false, string $subdomain = null) :array`  
     Пакетно добавляет заявки в неразобранное. Возвращает массив параметров UID неразобранного.
-    - `$amoObjects` - объект классов-моделей `AmoIncomingLeadForm` или `AmoIncomingLeadSip` или массив этих объектов;
+    - `$amoObjects` - объект классов-моделей `KommoIncomingLeadForm` или `KommoIncomingLeadSip` или массив этих объектов;
     - `$returnResponses` - возвращать массив ответов сервера amoCRM вместо массива UID;
     - `$subdomain` - поддомен или полный домен amoCRM. Если null, то используется поддомен последней выполненной авторизации.
-- `static saveIncomingObjectsWithLimit(AmoIncomingLeadForm|AmoIncomingLeadSip|array $amoObjects, bool $returnResponses = false, string $subdomain = null, $limit = 250) :array`  
+- `static saveIncomingObjectsWithLimit(KommoIncomingLeadForm|KommoIncomingLeadSip|array $amoObjects, bool $returnResponses = false, string $subdomain = null, $limit = 250) :array`  
     Пакетно добавляет заявки в неразобранное с ограничением на число заявок в одном запросе к API. Возвращает массив UID неразобранного.
-    - `$amoObjects` - объект классов-моделей `AmoIncomingLeadForm` или `AmoIncomingLeadSip` или массив этих объектов;
+    - `$amoObjects` - объект классов-моделей `KommoIncomingLeadForm` или `KommoIncomingLeadSip` или массив этих объектов;
     - `$returnResponses` - возвращать массив ответов сервера amoCRM вместо массива UID;
     - `$subdomain` - поддомен или полный домен amoCRM. Если null, то используется поддомен последней выполненной авторизации;
     - `$limit` - максимальное число заявок в одном запросе к API.
@@ -730,7 +730,7 @@ try {
 <a id="%D0%94%D0%BE%D0%BF%D0%BE%D0%BB%D0%BD%D0%B8%D1%82%D0%B5%D0%BB%D1%8C%D0%BD%D1%8B%D0%B5-%D0%BC%D0%B5%D1%82%D0%BE%D0%B4%D1%8B"></a>
 ### Дополнительные методы
 
-Дополнительные статические методы класса `AmoAPI`:
+Дополнительные статические методы класса `KommoAPI`:
 
 - `static getAccount(string $with = '', string $subdomain = null) :array`  
     Возвращает информацию об аккаунте amoCRM.
@@ -768,7 +768,7 @@ try {
 Для предотвращения возникновения данной ошибки в методе `save()` реализован механизм блокировки одновременного обновления одной сущности.
 До окончания обновления сущности в первом по времени запущенном процессе (потоке исполнения), то есть до получения ответа от API amoCRM,
 другие процессы, конкурирующие за обновление той же сущности, приостанавливаются и предпринимают повторные попытки выполнить обновление сущности 
-каждые `AmoAPI::$lockEntityTimeout` секунд с максимально допустимым числом попыток `AmoAPI::$lockEntityAttempts`.
+каждые `KommoAPI::$lockEntityTimeout` секунд с максимально допустимым числом попыток `KommoAPI::$lockEntityAttempts`.
 
 <a id="%D0%A2%D1%80%D0%BE%D1%82%D1%82%D0%BB%D0%B8%D0%BD%D0%B3-%D0%B7%D0%B0%D0%BF%D1%80%D0%BE%D1%81%D0%BE%D0%B2-%D0%BA-api"></a>
 ## Троттлинг запросов к API
@@ -776,19 +776,19 @@ try {
 Для предотвращения превышения максимально допустимого числа запросов к API amoCRM ([не более 7 запросов в секунду](https://www.amocrm.ru/developers/content/api/recommendations))
 в рамках одного процесса или потока исполнения в библиотеке реализован простой алгоритм троттлинга запросов,
 основанный на вычислении времени, прошедшего с момента отправки последнего запроса к API, и приостановке процесса 
-до истечения `1/AmoAPI::$throttle` секунд.
+до истечения `1/KommoAPI::$throttle` секунд.
 
 <a id="%D0%9E%D1%82%D0%BB%D0%B0%D0%B4%D0%BE%D1%87%D0%BD%D1%8B%D0%B9-%D1%80%D0%B5%D0%B6%D0%B8%D0%BC-%D0%B8-%D0%BB%D0%BE%D0%B3%D0%B8%D1%80%D0%BE%D0%B2%D0%B0%D0%BD%D0%B8%D0%B5"></a>
 ## Отладочный режим и логирование
 
-При включении отладочного режима `AmoAPI::$debug = true` информация о каждом запросе/ответе к API amoCRM выводится в STDOUT.  
+При включении отладочного режима `KommoAPI::$debug = true` информация о каждом запросе/ответе к API amoCRM выводится в STDOUT.  
 
 Для логирования каждого запроса/ответа к API amoCRM может быть использован произвольный класс-логгер, реализующий стандарт [PSR-3](https://www.php-fig.org/psr/psr-3/),
-или простейший класс-логгер `AmoAPIDebugLogger`. Объект класса-логгера устанавливается в свойстве `AmoAPI::$debugLogger`.
-Логирование выполняется независимо от состояния отладочного режима `AmoAPI::$debug`.
+или простейший класс-логгер `KommoAPIDebugLogger`. Объект класса-логгера устанавливается в свойстве `KommoAPI::$debugLogger`.
+Логирование выполняется независимо от состояния отладочного режима `KommoAPI::$debug`.
 При каждом запросе/ответе к API в классе-логгере вызывается метод `debug()`.  
 
-В конструктор класса `AmoAPIDebugLogger` может быть передано имя лог-файла:
+В конструктор класса `KommoAPIDebugLogger` может быть передано имя лог-файла:
 
 - `__construct(string $logFile = 'logs/debug.log')`
     + `$logFile` - лог-файл.
@@ -796,8 +796,8 @@ try {
 <a id="%D0%9E%D0%B1%D1%80%D0%B0%D0%B1%D0%BE%D1%82%D0%BA%D0%B0-%D0%BE%D1%88%D0%B8%D0%B1%D0%BE%D0%BA"></a>
 ## Обработка ошибок
 
-При возникновении ошибок выбрасывается исключение с объектом класса `\AmoCRM\AmoAPIException`.  
-Класс-исключение `AmoAPIException` содержит следующие вспомогательные методы:
+При возникновении ошибок выбрасывается исключение с объектом класса `\KommoCRM\KommoAPIException`.  
+Класс-исключение `KommoAPIException` содержит следующие вспомогательные методы:
 
 - `getErrors() :array` Возвращает массив сообщений об ошибках (errors) из ответа сервера amoCRM;
 - `getItems() :array` Возвращает массив параметров сущностей (items) из ответа сервера amoCRM.
@@ -1619,7 +1619,7 @@ try {
 <a id="%D0%9F%D0%BE%D0%B4%D0%B4%D0%B5%D1%80%D0%B6%D0%BA%D0%B0-ajax-%D0%B7%D0%B0%D0%BF%D1%80%D0%BE%D1%81%D0%BE%D0%B2-%D0%BA-frontend-%D0%BC%D0%B5%D1%82%D0%BE%D0%B4%D0%B0%D0%BC"></a>
 ### Поддержка AJAX-запросов к frontend-методам
 
-Метод `\AmoCRM\AmoAPI::request()` позволяет выполнять AJAX-запросы к frontend-методам.
+Метод `\KommoCRM\KommoAPI::request()` позволяет выполнять AJAX-запросы к frontend-методам.
 
 ```php
 use Kommo\{KommoAPI, KommoAPIException};

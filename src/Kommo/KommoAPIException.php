@@ -1,6 +1,6 @@
 <?php
 /**
- * Клсаа AmoCRMAPIException. Обрабатывает исключения в KommoAPI.
+ * Клаcc KommoAPIException. Обрабатывает исключения в KommoAPI.
  *
  * @author    andrey-tech
  * @copyright 2019-2020 andrey-tech
@@ -43,7 +43,7 @@ class KommoAPIException extends Exception
      */
     public function __construct(string $message = '', $code = 0, Exception $previous = null)
     {
-        parent::__construct("AmoCRM API: " . $message, $code, $previous);
+        parent::__construct("Kommo API: " . $message, $code, $previous);
     }
 
     /**
