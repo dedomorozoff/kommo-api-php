@@ -1,5 +1,5 @@
 {
-    "name": "andrey-tech/amocrm-api-php",
+    "name": "dedomorozoff/kommo-api-php",
     "description": "Simple wrapper PHP7+ for API kommo/amoCRM with oAuth 2.0 ",
     "keywords": [ "kommo","amocrm", "crm", "api", "api-wrapper", "oauth2", "AJAX", "throttling", "logging" ],
     "homepage": "https://github.com/dedomorozoff/kommo-api-php",
