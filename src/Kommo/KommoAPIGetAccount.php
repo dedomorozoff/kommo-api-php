@@ -20,7 +20,7 @@ namespace Kommo;
 
 /**
  * Trait KommoAPIGetAccount
- * @package AmoCRM
+ * @package Kommo
  */
 trait KommoAPIGetAccount
 {
