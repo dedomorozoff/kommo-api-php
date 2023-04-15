@@ -1,6 +1,6 @@
 <?php
 /**
- * Клсаа AmoCRMAPIException. Обрабатывает исключения в AmoAPI.
+ * Клсаа AmoCRMAPIException. Обрабатывает исключения в KommoAPI.
  *
  * @author    andrey-tech
  * @copyright 2019-2020 andrey-tech
@@ -17,11 +17,11 @@
 
 declare(strict_types = 1);
 
-namespace AmoCRM;
+namespace Kommo;
 
 use Exception;
 
-class AmoAPIException extends Exception
+class KommoAPIException extends Exception
 {
     /**
      * Массив ошибок из $response['_embedded']['errors']

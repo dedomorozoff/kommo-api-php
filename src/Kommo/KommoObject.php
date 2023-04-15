@@ -1,6 +1,6 @@
 <?php
 /**
- * Класс AmoObject. Абстрактный базовый класс для работы с сущностями amoCRM.
+ * Класс KommoObject. Абстрактный базовый класс для работы с сущностями amoCRM.
  *
  * @author    andrey-tech
  * @copyright 2020 andrey-tech
@@ -18,7 +18,7 @@
  * v1.3.0 (10.05.2020) Добавлена проверка ответа сервера в метод save(). Добавлено свойство request_id
  * v1.4.0 (16.05.2020) Добавлен параметр $returnResponse в метод save()
  * v1.5.0 (19.05.2020) Добавлен параметр $subdomain в конструктор
- * v1.6.0 (21.05.2020) Добавлена поддержка параметра AmoAPI::$updatedAtDelta
+ * v1.6.0 (21.05.2020) Добавлена поддержка параметра KommoAPI::$updatedAtDelta
  * v1.6.1 (25.05.2020) Рефракторинг
  * v1.7.0 (26.05.2020) Добавлена блокировка сущностей при обновлении (update) методом save()
  * v1.7.1 (23.07.2020) Исправлен тип параметра $returnResponse в методе save()
@@ -30,9 +30,9 @@
 
 declare(strict_types = 1);
 
-namespace AmoCRM;
+namespace Kommo;
 
-abstract class AmoObject
+abstract class KommoObject
 {
     /**
      * Путь для запроса к API (определяется в дочерних классах)
@@ -166,7 +166,7 @@ abstract class AmoObject
 
         // Если обновление сущности, то добавляем обязательный параметр 'updated_at'
         if (isset($this->id)) {
-            $params['updated_at'] = time() + AmoAPI::$updatedAtDelta;
+            $params['updated_at'] = time() + KommoAPI::$updatedAtDelta;
         }
 
         return $params;
@@ -176,23 +176,23 @@ abstract class AmoObject
      * Заполняет модель по ID сущности
      * @param int|string $id ID сущности
      * @param array $params Дополнительные параметры запроса, передаваемые при GET-запросе к amoCRM
-     * @return AmoObject
-     * @throws AmoAPIException
+     * @return KommoObject
+     * @throws KommoAPIException
      */
     public function fillById($id, array $params = [])
     {
         $params = array_merge([ 'id' => $id ], $params);
-        $response = AmoAPI::request($this::URL, 'GET', $params, $this->subdomain);
-        $items = AmoAPI::getItems($response);
+        $response = KommoAPI::request($this::URL, 'GET', $params, $this->subdomain);
+        $items = KommoAPI::getItems($response);
 
         $className = get_class($this);
         if (empty($items)) {
-            throw new AmoAPIException("Не найдена сущность {$className} с ID {$id}");
+            throw new KommoAPIException("Не найдена сущность {$className} с ID {$id}");
         }
 
         $item = array_shift($items);
         if ($item['id'] != $id) {
-            throw new AmoAPIException("Нет сущности {$className} с ID {$id}");
+            throw new KommoAPIException("Нет сущности {$className} с ID {$id}");
         }
 
         $this->fill($item);
@@ -255,7 +255,7 @@ abstract class AmoObject
     /**
      * Устанавливает значение дополнительных полей
      * @param array $params Значения дополнительных полей
-     * @return AmoObject
+     * @return KommoObject
      */
     public function setCustomFields(array $params)
     {
@@ -288,10 +288,10 @@ abstract class AmoObject
     /**
      * Добавляет тэги
      * @param array | string $tags
-     * @return AmoObject
+     * @return KommoObject
      *
      */
-    public function addTags($tags) :AmoObject
+    public function addTags($tags) :KommoObject
     {
         if (! is_array($tags)) {
             $tags = [ $tags ];
@@ -313,10 +313,10 @@ abstract class AmoObject
     /**
      * Удаляет тэги
      * @param array | string $tags
-     * @return AmoObject
+     * @return KommoObject
      *
      */
-    public function delTags($tags) :AmoObject
+    public function delTags($tags) :KommoObject
     {
         if (! is_array($tags)) {
             $tags = [ $tags ];
@@ -331,26 +331,26 @@ abstract class AmoObject
      * @param bool $returnResponse Вернуть ответ сервера вместо ID сущности
      * @return mixed
      *
-     * @throws AmoAPIException
+     * @throws KommoAPIException
      */
     public function save(bool $returnResponse = false)
     {
         if (isset($this->id)) {
-            $lock = AmoAPI::lockEntity($this);
+            $lock = KommoAPI::lockEntity($this);
             $params = [ 'update' => [ $this->getParams() ] ];
         } else {
             $lock = null;
             $params = [ 'add' => [ $this->getParams() ] ];
         }
 
-        $response = AmoAPI::request($this::URL, 'POST', $params, $this->subdomain);
-        AmoAPI::unlockEntity($lock);
+        $response = KommoAPI::request($this::URL, 'POST', $params, $this->subdomain);
+        KommoAPI::unlockEntity($lock);
 
-        $items = AmoAPI::getItems($response);
+        $items = KommoAPI::getItems($response);
         if (empty($items)) {
             $action = isset($this->id) ? 'обновить' : 'добавить';
             $className = get_class($this);
-            throw new AmoAPIException(
+            throw new KommoAPIException(
                 "Не удалось {$action} сущность {$className} (пустой ответ): " . print_r($params, true)
             );
         }

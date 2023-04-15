@@ -1,6 +1,6 @@
 <?php
 /**
- * Трейт AmoAPIAuth. Содержит методы для авторизации по API-ключу пользователя
+ * Трейт KommoAPIAuth. Содержит методы для авторизации по API-ключу пользователя
  *
  * @author    andrey-tech
  * @copyright 2020 andrey-tech
@@ -17,9 +17,9 @@
 
 declare(strict_types = 1);
 
-namespace AmoCRM;
+namespace Kommo;
 
-trait AmoAPIAuth
+trait KommoAPIAuth
 {
     /**
      * Таймаут перед повторной авторизацией по API-ключу пользователя при ошибке '401 Unauthorized', секунд
@@ -34,7 +34,7 @@ trait AmoAPIAuth
     public static $reAuthAttempts = 3;
 
     /**
-     * Каталог для хранения файлов cookie относительно каталога файла класса AmoAPI (на конце /)
+     * Каталог для хранения файлов cookie относительно каталога файла класса KommoAPI (на конце /)
      * @var string
      */
     public static $cookieFileDir = 'cookies/';
@@ -74,7 +74,7 @@ trait AmoAPIAuth
 
         // Проверка ответа от сервера
         if (! isset($response['response']['auth']) || ! $response['response']['auth']) {
-            throw new AmoAPIException(
+            throw new KommoAPIException(
                 "Не удалось выполнить авторизацию по API-ключу: " . self::unescapeUnicode(self::$lastResult)
             );
         }

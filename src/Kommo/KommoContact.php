@@ -1,41 +1,42 @@
 <?php
 /**
- * Класс AmoCompany. Содерит методы для работы с компаниями.
+ * Класс KommoContact. Содержит методы для работы с контактами.
  *
  * @author    andrey-tech
  * @copyright 2020 andrey-tech
  * @see https://github.com/andrey-tech/amocrm-api-php
  * @license   MIT
  *
- * @version 1.2.0
+ * @version 1.3.1
  *
  * v1.0.0 (24.04.2019) Начальный релиз.
- * v1.1.0 (19.05.2020) Добавлена поддержка параметра $subdomain в конструктор
- * v1.2.0 (20.05.2020) Добавлены методы getPhone(), getEmail()
- *
+ * v1.1.0 (16.05.2019) Добавлены свойства first_name, last_name
+ * v1.2.0 (19.05.2020) Добавлена поддержка параметра $subdomain в конструктор
+ * v1.3.0 (20.05.2020) Добавлены методы addCompany(), getPhone(), getEmail()
+ * v1.3.1 (19.07.2020) Исправлен баг с типом возвращаемого значения в методе addCustomers()
  */
 
 declare(strict_types = 1);
 
-namespace AmoCRM;
+namespace Kommo;
 
-class AmoCompany extends AmoObject
+class KommoContact extends KommoObject
 {
     /**
      * Путь для запроса к API
      * @var string
      */
-    const URL = '/api/v2/companies';
+    const URL = '/api/v2/contacts';
+
+    /**
+     * @var array
+     */
+    public $company = [];
 
     /**
      * @var array
      */
     public $leads = [];
-
-    /**
-     * @var array
-     */
-    public $contacts = [];
 
     /**
      * @var array
@@ -46,6 +47,16 @@ class AmoCompany extends AmoObject
      * @var int
      */
     public $closest_task_at;
+
+    /**
+     * @var string
+     */
+    public $first_name;
+
+    /**
+     * @var string
+     */
+    public $last_name;
 
     /**
      * Конструктор
@@ -68,13 +79,13 @@ class AmoCompany extends AmoObject
         if (isset($this->closest_task_at)) {
             $params['closest_task_at'] = $this->closest_task_at;
         }
-
-        if (count($this->leads)) {
-            $params['leads_id'] = $this->leads['id'];
+        
+        if (count($this->company)) {
+            $params['company_id'] = $this->company['id'];
         }
         
-        if (count($this->contacts)) {
-            $params['contacts_id'] = $this->contacts['id'];
+        if (count($this->leads)) {
+            $params['leads_id'] = $this->leads['id'];
         }
         
         if (count($this->customers)) {
@@ -85,12 +96,12 @@ class AmoCompany extends AmoObject
     }
 
     /**
-     * Добавляет задачи
+     * Добавляет сделки (не более 40 сделок у 1 контакта)
      * @param array | int $leads
-     * @return AmoCompany
+     * @return KommoContact
      *
      */
-    public function addLeads($leads) :AmoCompany
+    public function addLeads($leads) :KommoContact
     {
         if (! is_array($leads)) {
             $leads = [ $leads ];
@@ -110,37 +121,12 @@ class AmoCompany extends AmoObject
     }
 
     /**
-     * Добавляет контакты
-     * @param array | int $contacts
-     * @return AmoCompany
-     *
-     */
-    public function addContacts($contacts) :AmoCompany
-    {
-        if (! is_array($contacts)) {
-            $contacts = [ $contacts ];
-        }
-        
-        if (isset($this->contacts['id'])) {
-            foreach ($contacts as $id) {
-                if (! in_array($id, $this->contacts['id'])) {
-                    $this->contacts['id'][] = $id;
-                }
-            }
-        } else {
-            $this->contacts['id'] = $contacts;
-        }
-
-        return $this;
-    }
-
-    /**
      * Добавляет покупателей
      * @param array | int $customers
-     * @return AmoCompany
+     * @return KommoCompany
      *
      */
-    public function addCustomers($customers) :AmoCompany
+    public function addCustomers($customers) :KommoContact
     {
         if (! is_array($customers)) {
             $customers = [ $customers ];
@@ -156,6 +142,17 @@ class AmoCompany extends AmoObject
             $this->customers['id'] = $customers;
         }
 
+        return $this;
+    }
+
+    /**
+     * Добавляет компанию
+     * @param int $companyId ID компании
+     * @return KommoContact
+     */
+    public function addCompany($companyId) :KommoContact
+    {
+        $this->company = [ 'id' => $companyId ];
         return $this;
     }
 

@@ -1,6 +1,6 @@
 <?php
 /**
- * Трейт AmoAPIGetAllEntities. Содержит методы для получения списка всех сущностей заданного типа
+ * Трейт KommoAPIGetAllEntities. Содержит методы для получения списка всех сущностей заданного типа
  *
  * @author    andrey-tech
  * @copyright 2019-2020 andrey-tech
@@ -22,11 +22,11 @@
 
 declare(strict_types = 1);
 
-namespace AmoCRM;
+namespace Kommo;
 
 use Generator;
 
-trait AmoAPIGetAllEntities
+trait KommoAPIGetAllEntities
 {
     /**
      * Кол-во выбираемых строк за один запрос (не более 500)
@@ -46,7 +46,7 @@ trait AmoAPIGetAllEntities
         bool $returnResponse = false,
         $subdomain = null
     ) : Generator {
-        return self::getAll(AmoCompany::URL, $params, $returnResponse, $subdomain);
+        return self::getAll(KommoCompany::URL, $params, $returnResponse, $subdomain);
     }
 
     /**
@@ -61,7 +61,7 @@ trait AmoAPIGetAllEntities
         bool $returnResponse = false,
         $subdomain = null
     ) : Generator {
-        return self::getAll(AmoLead::URL, $params, $returnResponse, $subdomain);
+        return self::getAll(KommoLead::URL, $params, $returnResponse, $subdomain);
     }
 
     /**
@@ -76,7 +76,7 @@ trait AmoAPIGetAllEntities
         bool $returnResponse = false,
         $subdomain = null
     ) : Generator {
-        return self::getAll(AmoContact::URL, $params, $returnResponse, $subdomain);
+        return self::getAll(KommoContact::URL, $params, $returnResponse, $subdomain);
     }
 
     /**
@@ -91,7 +91,7 @@ trait AmoAPIGetAllEntities
         bool $returnResponse = false,
         $subdomain = null
     ) : Generator {
-        return self::getAll(AmoTask::URL, $params, $returnResponse, $subdomain);
+        return self::getAll(KommoTask::URL, $params, $returnResponse, $subdomain);
     }
 
     /**
@@ -106,7 +106,7 @@ trait AmoAPIGetAllEntities
         bool $returnResponse = false,
         $subdomain = null
     ) : Generator {
-        return self::getAll(AmoNote::URL, $params, $returnResponse, $subdomain);
+        return self::getAll(KommoNote::URL, $params, $returnResponse, $subdomain);
     }
 
     /**
@@ -121,7 +121,7 @@ trait AmoAPIGetAllEntities
         bool $returnResponse = false,
         $subdomain = null
     ) : Generator {
-        return self::getAll(AmoIncomingLead::URL, $params, $returnResponse, $subdomain);
+        return self::getAll(KommoIncomingLead::URL, $params, $returnResponse, $subdomain);
     }
 
     /**

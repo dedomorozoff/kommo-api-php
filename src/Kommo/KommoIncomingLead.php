@@ -1,6 +1,6 @@
 <?php
 /**
- * Класс AmoIncomingLead. Содержит методы для работы с неразобранными сделками (заявками)
+ * Класс KommoIncomingLead. Содержит методы для работы с неразобранными сделками (заявками)
  *
  * @author    andrey-tech
  * @copyright 2020 andrey-tech
@@ -20,13 +20,13 @@
 
 declare(strict_types = 1);
 
-namespace AmoCRM;
+namespace Kommo;
 
 /**
- * Class AmoIncomingLead
+ * Class KommoIncomingLead
  * @package AmoCRM
  */
-abstract class AmoIncomingLead extends AmoObject
+abstract class KommoIncomingLead extends KommoObject
 {
     /**
      * Путь для запроса к API
@@ -113,23 +113,23 @@ abstract class AmoIncomingLead extends AmoObject
      * Заполняет модель по UID сущности
      * @param int|string $uid UID сущности
      * @param array $params Дополнительные параметры запроса, передаваемые при GET-запросе к amoCRM
-     * @return AmoObject
-     * @throws AmoAPIException
+     * @return KommoObject
+     * @throws KommoAPIException
      */
     public function fillByUid($uid, array $params = [])
     {
         $params = array_merge([ 'uid' => $uid ], $params);
-        $response = AmoAPI::request(self::URL, 'GET', $params, $this->subdomain);
-        $items = AmoAPI::getItems($response);
+        $response = KommoAPI::request(self::URL, 'GET', $params, $this->subdomain);
+        $items = KommoAPI::getItems($response);
 
         $className = get_class($this);
         if (empty($items)) {
-            throw new AmoAPIException("Не найдена сущность {$className} с UID {$uid}");
+            throw new KommoAPIException("Не найдена сущность {$className} с UID {$uid}");
         }
 
         $item = array_shift($items);
         if ($item['uid'] != $uid) {
-            throw new AmoAPIException("Нет сущности {$className} с UID {$uid}");
+            throw new KommoAPIException("Нет сущности {$className} с UID {$uid}");
         }
 
         $this->fill($item);
@@ -140,7 +140,7 @@ abstract class AmoIncomingLead extends AmoObject
     /**
      * Устанавливает параметры неразобранного
      * @param array $params Параметры неразобранного
-     * @return $this AmoIncomingLead
+     * @return $this KommoIncomingLead
      */
     public function setIncomingLeadInfo(array $params)
     {
@@ -150,8 +150,8 @@ abstract class AmoIncomingLead extends AmoObject
 
     /**
      * Добавляет информацию о сделке
-     * @param AmoLead|array $lead Объект класса AmoLead или массив параметров сделки
-     * @return $this AmoIncomingLead
+     * @param KommoLead|array $lead Объект класса KommoLead или массив параметров сделки
+     * @return $this KommoIncomingLead
      */
     public function addIncomingLead($lead)
     {
@@ -160,15 +160,15 @@ abstract class AmoIncomingLead extends AmoObject
         } else if (is_object($lead) && is_a($lead, '\AmoCRM\AmoLead')) {
             $this->incoming_entities['leads'][] = $lead->getParams();
         } else {
-            throw new AmoAPIException("В параметрах ожидается объект класса AmoLead или массив");
+            throw new KommoAPIException("В параметрах ожидается объект класса KommoLead или массив");
         }
         return $this;
     }
 
     /**
      * Добавляет информацию о контакте
-     * @param AmoContact|array $contact Объект класса AmoContact или массив параметров контакта
-     * @return $this AmoIncomingLead
+     * @param KommoContact|array $contact Объект класса KommoContact или массив параметров контакта
+     * @return $this KommoIncomingLead
      */
     public function addIncomingContact($contact)
     {
@@ -177,15 +177,15 @@ abstract class AmoIncomingLead extends AmoObject
         } else if (is_object($contact) && is_a($contact, '\AmoCRM\AmoContact')) {
             $this->incoming_entities['contacts'][] = $contact->getParams();
         } else {
-            throw new AmoAPIException("В параметрах ожидается объект класса AmoContact или массив");
+            throw new KommoAPIException("В параметрах ожидается объект класса KommoContact или массив");
         }
         return $this;
     }
 
     /**
      * Добавляет информацию о компании
-     * @param AmoCompany|array $company Объект класса AmoCompany или массив параметров компании
-     * @return $this AmoIncomingLead
+     * @param KommoCompany|array $company Объект класса KommoCompany или массив параметров компании
+     * @return $this KommoIncomingLead
      */
     public function addIncomingCompany($company)
     {
@@ -194,7 +194,7 @@ abstract class AmoIncomingLead extends AmoObject
         } else if (is_object($company) && is_a($company, '\AmoCRM\AmoContact')) {
             $this->incoming_entities['companies'][] = $company->getParams();
         } else {
-            throw new AmoAPIException("В параметрах ожидается объект класса AmoCompany или массив");
+            throw new KommoAPIException("В параметрах ожидается объект класса KommoCompany или массив");
         }
         return $this;
     }
@@ -207,11 +207,11 @@ abstract class AmoIncomingLead extends AmoObject
     public function save(bool $returnResponse = false)
     {
         $params = [ 'add' => [ $this->getParams() ] ];
-        $response = AmoAPI::request($this::URL, 'POST', $params, $this->subdomain);
+        $response = KommoAPI::request($this::URL, 'POST', $params, $this->subdomain);
 
         $status = $response['status'] ?? null;
         if ($status != 'success') {
-            throw new AmoAPIException(
+            throw new KommoAPIException(
                 "Не удалось добавить сделку в неразобранное: " . print_r($response, true)
             );
         }

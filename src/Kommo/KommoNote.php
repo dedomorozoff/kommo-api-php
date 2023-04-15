@@ -1,6 +1,6 @@
 <?php
 /**
- * Класс AmoTask. Содержит методы для работы с задачами.
+ * Класс KommoNote. Содержит методы для работы с примечаниями.
  *
  * @author    andrey-tech
  * @copyright 2020 andrey-tech
@@ -16,23 +16,34 @@
 
 declare(strict_types = 1);
 
-namespace AmoCRM;
+namespace Kommo;
 
-class AmoTask extends AmoObject
+class KommoNote extends KommoObject
 {
     /**
      * Путь для запроса к API
      * @var string
      */
-    const URL = '/api/v2/tasks';
+    const URL = '/api/v2/notes';
 
     /**
-     * Типы задач
+     * Типы событий
      * @var int
      */
-    const CALL_TASKTYPE = 1;
-    const MEET_TASKTYPE = 2;
-    const MAIL_TASKTYPE = 3;
+    const LEAD_CREATED_NOTETYPE = 1;
+    const CONTACT_CREATED_NOTETYPE = 2;
+    const LEAD_STATUS_CHANGED_NOTETYPE = 3;
+    const COMMON_NOTETYPE = 4;
+    const COMPANY_CREATED_NOTETYPE = 12;
+    const TASK_RESULT_NOTETYPE = 13;
+    const SYSTEM_NOTETYPE = 25;
+    const SMS_IN_NOTETYPE = 102;
+    const SMS_OUT_NOTETYPE = 103;
+
+    /**
+     * @var bool
+     */
+    public $is_editable;
 
     /**
      * @var int
@@ -45,29 +56,14 @@ class AmoTask extends AmoObject
     public $element_type;
 
     /**
-     * @var int
-     */
-    public $complete_till_at;
-
-    /**
-     * @var int
-     */
-    public $task_type;
-
-    /**
      * @var string
      */
     public $text;
 
     /**
-     * @var bool
+     * @var int
      */
-    public $is_completed;
-
-    /**
-     * @var array
-     */
-    public $result = [];
+    public $note_type;
 
     /**
      * Конструктор
@@ -87,43 +83,20 @@ class AmoTask extends AmoObject
     {
         $params = [];
 
-        $properties = [ 'element_id', 'element_type', 'complete_till_at', 'task_type', 'text', 'is_completed' ];
+        $properties = [ 'is_editable', 'element_id', 'element_type', 'text', 'note_type' ];
         foreach ($properties as $property) {
             if (isset($this->$property)) {
                 $params[$property] = $this->$property;
             }
         }
 
-        if (count($this->result)) {
-            $params['result'] = $this->result;
+        if ($this->note_type == $this::SYSTEM_NOTETYPE ||
+            $this->note_type == $this::SMS_IN_NOTETYPE ||
+            $this->note_type == $this::SMS_OUT_NOTETYPE
+        ) {
+            $params['params'] = [ 'text' => $this->text ];
         }
 
         return array_merge(parent::getParams(), $params);
-    }
-
-    /**
-     * Привязывает контакт к задаче
-     * @param int $contactId
-     * @return AmoTask
-     *
-     */
-    public function addContact($contactId) :AmoTask
-    {
-        $this->element_id = $contactId;
-        $this->element_type = self::CONTACT_TYPE;
-        return $this;
-    }
-
-    /**
-     * Привязывает сделку к задаче
-     * @param int $leadId
-     * @return AmoTask
-     *
-     */
-    public function addLead($leadId) :AmoTask
-    {
-        $this->element_id = $leadId;
-        $this->element_type = self::LEAD_TYPE;
-        return $this;
     }
 }

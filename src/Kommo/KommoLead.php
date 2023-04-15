@@ -1,6 +1,6 @@
 <?php
 /**
- * Класс AmoLead. Содержит методы для работы со сделками.
+ * Класс KommoLead. Содержит методы для работы со сделками.
  *
  * @author    andrey-tech
  * @copyright 2020-2021 andrey-tech
@@ -20,9 +20,9 @@
 
 declare(strict_types = 1);
 
-namespace AmoCRM;
+namespace Kommo;
 
-class AmoLead extends AmoObject
+class KommoLead extends KommoObject
 {
     /**
      * Путь для запроса к API
@@ -135,10 +135,10 @@ class AmoLead extends AmoObject
     /**
      * Добавляет контакты (не более 40 контактов у 1 сделки)
      * @param array|int $contacts ID контакта или массив ID контактов
-     * @return AmoLead
+     * @return KommoLead
      *
      */
-    public function addContacts($contacts): AmoLead
+    public function addContacts($contacts): KommoLead
     {
         if (! is_array($contacts)) {
             $contacts = [ $contacts ];
@@ -174,9 +174,9 @@ class AmoLead extends AmoObject
     /**
      * Устанавливает элементы каталога
      * @param array $catalogElements Массив каталогов с их элементами
-     * @return AmoLead
+     * @return KommoLead
      */
-    public function setCatalogElements(array $catalogElements): AmoLead
+    public function setCatalogElements(array $catalogElements): KommoLead
     {
         $this->catalog_elements = $catalogElements;
         
@@ -186,9 +186,9 @@ class AmoLead extends AmoObject
     /**
      * Добавляет компанию
      * @param int $companyId ID компании
-     * @return AmoLead
+     * @return KommoLead
      */
-    public function addCompany(int $companyId) :AmoLead
+    public function addCompany(int $companyId) :KommoLead
     {
         $this->company = [ 'id' => $companyId ];
 
@@ -202,9 +202,9 @@ class AmoLead extends AmoObject
     /**
      * Отвязывает контакты по ID контактов
      * @param array|int $contacts ID контакта или массив ID контактов
-     * @return AmoLead
+     * @return KommoLead
      */
-    public function removeContacts($contacts): AmoLead
+    public function removeContacts($contacts): KommoLead
     {
         if (! is_array($contacts)) {
             $contacts = [ $contacts ];
@@ -240,9 +240,9 @@ class AmoLead extends AmoObject
     /**
      * Отвязывает компанию по ID компании
      * @param int $companyId ID компании
-     * @return AmoLead
+     * @return KommoLead
      */
-    public function removeCompany(int $companyId): AmoLead
+    public function removeCompany(int $companyId): KommoLead
     {
         $this->unlink['company_id'] = $companyId;
 

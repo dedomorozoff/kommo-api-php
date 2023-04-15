@@ -1,6 +1,6 @@
 <?php
 /**
- * Класс AmoAPI. amoCRM REST API wrapper
+ * Класс KommoAPI. amoCRM REST API wrapper
  *
  * @author    andrey-tech
  * @copyright 2019-2020 andrey-tech
@@ -14,7 +14,7 @@
  * v1.2.0 (19.08.2019) Добавлен метод deleteObjects()
  * v1.2.1 (19.02.2020) Удален метод deleteObjects()
  * v2.0.0 (06.04.2020) Добавлена авторизация по протоколу OAuth 2.0.
- *                     Добавлены трейты AmoAPIAuth, AmoAPIOAuth2
+ *                     Добавлены трейты KommoAPIAuth, KommoAPIOAuth2
  * v2.1.0 (10.05.2020) Добавлена проверка ответа сервера в метод saveObjects()
  * v2.2.0 (16.05.2020) Добавлен метод getItems(). Добавлен параметр $returnResponses в метод saveObjects()
  * v2.3.0 (22.05.2020) Добавлен метод deleteObjects() для удаления списков и их элементов
@@ -25,33 +25,33 @@
 
 declare(strict_types = 1);
 
-namespace AmoCRM;
+namespace Kommo;
 
-class AmoAPI
+class KommoAPI
 {
     // Трейт, формирующий GET/POST запросы к amoCRM
-    use AmoAPIRequest;
+    use KommoAPIRequest;
 
     // Трейт методов для получения информации об аккаунте
-    use AmoAPIGetAccount;
+    use KommoAPIGetAccount;
 
     // Трейт методов для получения сущностей
-    use AmoAPIGetEntities;
+    use KommoAPIGetEntities;
 
     // Трейт методов для получения всех сущностей
-    use AmoAPIGetAllEntities;
+    use KommoAPIGetAllEntities;
 
     // Трейт методов для авторизации по API-ключам пользователя
-    use AmoAPIAuth;
+    use KommoAPIAuth;
 
     // Трейт методов для авторизации по протоколу OAuth 2.0
-    use AmoAPIOAuth2;
+    use KommoAPIOAuth2;
 
     // Трейт методов для добавления и удаления webhooks
-    use AmoAPIWebhooks;
+    use KommoAPIWebhooks;
 
     // Трейт методов для принятия или отклонение неразобранных заявок
-    use AmoAPIIncomingLeads;
+    use KommoAPIIncomingLeads;
 
     /**
      * Возращает массив параметров сущностей из ответа сервера amoCRM
@@ -64,13 +64,13 @@ class AmoAPI
     }
 
     /**
-     * Сохраняет (добавляет или обновляет) объекты AmoObject с ограничением на число сущностей в одном запросе к API amoCRM
-     * @param array|object $amoObjects Массив объектов AmoObject или объект AmoObject
+     * Сохраняет (добавляет или обновляет) объекты KommoObject с ограничением на число сущностей в одном запросе к API amoCRM
+     * @param array|object $amoObjects Массив объектов KommoObject или объект KommoObject
      * @param bool $returnResponses Возвращать массив ответов сервера amoCRM вместо массива параметров сущностей
      * @param string $subdomain Поддомен amoCRM
      * @param int $limit Максимальное число сущностей в одном запросе к API amoCRM
      * @return array
-     * @throws AmoAPIException
+     * @throws KommoAPIException
      */
     public static function saveObjectsWithLimit(
         $amoObjects,
@@ -96,12 +96,12 @@ class AmoAPI
     }
 
     /**
-     * Сохраняет (добавляет или обновляет) объекты AmoObject
-     * @param array|object $amoObjects Массив объектов AmoObject или объект AmoObject
+     * Сохраняет (добавляет или обновляет) объекты KommoObject
+     * @param array|object $amoObjects Массив объектов KommoObject или объект KommoObject
      * @param bool $returnResponses Возвращать массив ответов сервера amoCRM вместо массива параметров сущностей
      * @param string $subdomain Поддомен amoCRM
      * @return array
-     * @throws AmoAPIException
+     * @throws KommoAPIException
      */
     public static function saveObjects($amoObjects, bool $returnResponses = false, $subdomain = null) :array
     {
@@ -120,9 +120,9 @@ class AmoAPI
 
         $responses = [];
         foreach ($parameters as $url => $params) {
-            $response = AmoAPI::request($url, 'POST', $params, $subdomain);
+            $response = KommoAPI::request($url, 'POST', $params, $subdomain);
             if (empty($response)) {
-                throw new AmoAPIException(
+                throw new KommoAPIException(
                     "Не удалось пакетно добавить/обновить сущности (пустой ответ) по запросу {$url}: " . print_r($params, true)
                 );
             }
@@ -141,12 +141,12 @@ class AmoAPI
     }
 
     /**
-     * Удаляет объекты AmoObject (списки или элементы списков)
-     * @param array|object $amoObjects Массив объектов AmoObject или объект AmoObject
+     * Удаляет объекты KommoObject (списки или элементы списков)
+     * @param array|object $amoObjects Массив объектов KommoObject или объект KommoObject
      * @param bool $returnResponses Возвращать массив ответов сервера amoCRM вместо массива параметров сущностей
      * @param string $subdomain Поддомен amoCRM
      * @return array
-     * @throws AmoAPIException
+     * @throws KommoAPIException
      */
     public static function deleteObjects($amoObjects, bool $returnResponses = false, $subdomain = null) :array
     {
@@ -159,16 +159,16 @@ class AmoAPI
             $params = $object->getParams();
             $id = $params['id'] ?? null;
             if (! $id) {
-                throw new AmoAPIException("Для удаления сущности требуется свойство id: " . print_r($params, true));
+                throw new KommoAPIException("Для удаления сущности требуется свойство id: " . print_r($params, true));
             }
             $parameters[$object::URL]['delete'][] = $id;
         }
 
         $responses = [];
         foreach ($parameters as $url => $params) {
-            $response = AmoAPI::request($url, 'POST', $params, $subdomain);
+            $response = KommoAPI::request($url, 'POST', $params, $subdomain);
             if (empty($response)) {
-                throw new AmoAPIException(
+                throw new KommoAPIException(
                     "Не удалось пакетно удаилить сущности (пустой ответ) по запросу {$url}: " . print_r($params, true)
                 );
             }

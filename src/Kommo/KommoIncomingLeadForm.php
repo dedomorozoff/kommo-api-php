@@ -1,6 +1,6 @@
 <?php
 /**
- * Класс AmoIncomingLeadForm. Содержит методы для работы с неразобранными сделками (заявками), созданными из веб-форм
+ * Класс KommoIncomingLeadForm. Содержит методы для работы с неразобранными сделками (заявками), созданными из веб-форм
  *
  * @author    andrey-tech
  * @copyright 2020 andrey-tech
@@ -16,9 +16,9 @@
 
 declare(strict_types = 1);
 
-namespace AmoCRM;
+namespace Kommo;
 
-class AmoIncomingLeadForm extends AmoIncomingLead
+class KommoIncomingLeadForm extends KommoIncomingLead
 {
     /**
      * Путь для запроса к API

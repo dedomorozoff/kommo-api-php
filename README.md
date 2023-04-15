@@ -1,4 +1,6 @@
-# amoCRM API PHP Wrapper
+# Kommo API PHP Wrapper
+
+Основано на
 
 ![amoCRM logo](./assets/amocrm-logo.png)  
 
@@ -155,8 +157,8 @@ $ composer require andrey-tech/amocrm-api-php:"^2.7"
 на access токен и refresh токен, которые сохраняются в хранилище токенов вместе с переданными значениями `$clientId`, `$clientSecret` и `$redirectUri`.
 
 ```php
-use AmoCRM\{AmoAPI, AmoAPIException};
-use AmoCRM\TokenStorage\TokenStorageException;
+use Kommo\{KommoAPI, KommoAPIException};
+use Kommo\TokenStorage\TokenStorageException;
 
 try {
     // Параметры авторизации по протоколу oAuth 2.0
@@ -167,12 +169,12 @@ try {
     $subdomain    = 'testsubdomain';
 
     // Первичная авторизация
-    AmoAPI::oAuth2($subdomain, $clientId, $clientSecret, $redirectUri, $authCode);
+    KommoAPI::oAuth2($subdomain, $clientId, $clientSecret, $redirectUri, $authCode);
 
     // Получение информации об аккаунте вместе с пользователями и группами
-    print_r(AmoAPI::getAccount($with = 'users,groups'));
+    print_r(KommoAPI::getAccount($with = 'users,groups'));
 
-} catch (AmoAPIException $e) {
+} catch (KommoAPIException $e) {
     printf('Ошибка авторизации (%d): %s' . PHP_EOL, $e->getCode(), $e->getMessage());
 } catch (TokenStorageException $e) {
     printf('Ошибка обработки токенов (%d): %s' . PHP_EOL, $e->getCode(), $e->getMessage());
@@ -186,19 +188,19 @@ try {
 достаточно передать только `$subdomain` - поддомен или полный домен amoCRM.
 
 ```php
-use AmoCRM\{AmoAPI, AmoAPIException};
-use AmoCRM\TokenStorage\TokenStorageException;
+use Kommo\{KommoAPI, KommoAPIException};
+use Kommo\TokenStorage\TokenStorageException;
 
 try {
 
     // Последующие авторизации
     $subdomain = 'testsubdomain';
-    AmoAPI::oAuth2($subdomain);
+    KommoAPI::oAuth2($subdomain);
 
     // Получение информации об аккаунте
-    print_r(AmoAPI::getAccount());
+    print_r(KommoAPI::getAccount());
 
-} catch (AmoAPIException $e) {
+} catch (KommoAPIException $e) {
     printf('Ошибка авторизации (%d): %s' . PHP_EOL, $e->getCode(), $e->getMessage());
 } catch (TokenStorageException $e) {
     printf('Ошибка обработки токенов (%d): %s' . PHP_EOL, $e->getCode(), $e->getMessage());
@@ -247,9 +249,10 @@ try {
 ##### Использование собственного класса для сохранения токенов
 
 Пример использования собственного класса для сохранения токенов в базе данных:
+
 ```php
-use AmoCRM\{AmoAPI, AmoAPIException};
-use AmoCRM\TokenStorage\DatabaseStorage;
+use Kommo\{KommoAPI, KommoAPIException};
+use Kommo\TokenStorage\DatabaseStorage;
 
 try {
     // Параметры авторизации по протоколу oAuth 2.0
@@ -260,23 +263,24 @@ try {
     $subdomain    = 'testsubdomain';
 
     // Устанавливаем объект класса, обеспечивающего сохранение токенов
-    AmoAPI::$tokenStorage = new DatabaseStorage();
+    KommoAPI::$tokenStorage = new DatabaseStorage();
 
     // Авторизация
-    AmoAPI::oAuth2($subdomain, $clientId, $clientSecret, $redirectUri, $authCode);
+    KommoAPI::oAuth2($subdomain, $clientId, $clientSecret, $redirectUri, $authCode);
 
     // Получение информации об аккаунте
-    print_r(AmoAPI::getAccount());
+    print_r(KommoAPI::getAccount());
 
-} catch (AmoAPIException $e) {
+} catch (KommoAPIException $e) {
     printf('Ошибка авторизации (%d): %s' . PHP_EOL, $e->getCode(), $e->getMessage());
 }
 ```
 
 Пример класса `\AmoCRM\TokenStorage\DatabaseStorage`:
+
 ```php
 <?php
-namespace AmoCRM\TokenStorage;
+namespace Kommo\TokenStorage;
 
 class DatabaseStorage implements TokenStorageInterface
 {
@@ -321,8 +325,8 @@ class DatabaseStorage implements TokenStorageInterface
 можно воспользоваться методом hasTokens() интерфейса `\AmoCRM\TokenStorage\TokenStorageInterface`:
 
 ```php
-use AmoCRM\{AmoAPI, AmoAPIException};
-use AmoCRM\TokenStorage\{FileStorage, TokenStorageException};
+use Kommo\{KommoAPI, KommoAPIException};
+use Kommo\TokenStorage\{FileStorage, TokenStorageException};
 
 try {
 
@@ -333,20 +337,20 @@ try {
     $redirectUri  = 'https://www.example.com/oauth2/';
     $subdomain    = 'testsubdomain';
 
-    AmoAPI::$tokenStorage = new FileStorage();
+    KommoAPI::$tokenStorage = new FileStorage();
 
-    $domain = AmoAPI::getAmoDomain($subdomain);
-    $isFirstAuth = ! AmoAPI::$tokenStorage->hasTokens($domain);
+    $domain = KommoAPI::getAmoDomain($subdomain);
+    $isFirstAuth = ! KommoAPI::$tokenStorage->hasTokens($domain);
 
     if ($isFirstAuth) {
         // Первичная авторизация
-        AmoAPI::oAuth2($subdomain, $clientId, $clientSecret, $redirectUri, $authCode);
+        KommoAPI::oAuth2($subdomain, $clientId, $clientSecret, $redirectUri, $authCode);
     } else {
         // Последующие авторизации
-        AmoAPI::oAuth2($subdomain);
+        KommoAPI::oAuth2($subdomain);
     }
 
-} catch (AmoAPIException $e) {
+} catch (KommoAPIException $e) {
     printf('Ошибка авторизации (%d): %s' . PHP_EOL, $e->getCode(), $e->getMessage());
 } catch (TokenStorageException $e) {
     printf('Ошибка обработки токенов (%d): %s' . PHP_EOL, $e->getCode(), $e->getMessage());
@@ -364,8 +368,9 @@ try {
     - `$subdomain` - поддомен или полный домен amoCRM.
 
 Пример авторизации по API-ключу пользователя.
+
 ```php
-use \AmoCRM\{AmoAPI, AmoAPIException};
+use \Kommo\{KommoAPI, KommoAPIException};
 
 try {
     // Параметры авторизации по API-ключу пользователя
@@ -374,12 +379,12 @@ try {
     $subdomain = 'testsubdomain';
 
     // Авторизация
-    AmoAPI::auth($login, $hash, $subdomain);
+    KommoAPI::auth($login, $hash, $subdomain);
 
     // Получение информации об аккаунте
-    print_r(AmoAPI::getAccount());
+    print_r(KommoAPI::getAccount());
 
-} catch (AmoAPIException $e) {
+} catch (KommoAPIException $e) {
     printf('Ошибка авторизации (%d): %s' . PHP_EOL, $e->getCode(), $e->getMessage());
 }
 ```
@@ -391,21 +396,21 @@ try {
 Для этого необходимо последовательно выполнить авторизацию в каждом их поддоменов.
 
 ```php
-use AmoCRM\{AmoAPI, AmoAPIException};
+use Kommo\{KommoAPI, KommoAPIException};
 
 try {
     // Авторизация в поддомене 1
-    AmoAPI::oAuth2($subdomain1, $clientId1, $clientSecret1, $redirectUri1, $authCode1);
+    KommoAPI::oAuth2($subdomain1, $clientId1, $clientSecret1, $redirectUri1, $authCode1);
 
     // Авторизация в поддомене 2
-    AmoAPI::auth($login2, $hash2, $subdomain2);
+    KommoAPI::auth($login2, $hash2, $subdomain2);
 
     //...
 
     // Авторизация в поддомене N
-    AmoAPI::oAuth2($subdomainN, $clientIdN, $clientSecretN, $redirectUriN, $authCodeN);
+    KommoAPI::oAuth2($subdomainN, $clientIdN, $clientSecretN, $redirectUriN, $authCodeN);
 
-} catch (AmoAPIException $e) {
+} catch (KommoAPIException $e) {
     printf('Ошибка авторизации (%d): %s' . PHP_EOL, $e->getCode(), $e->getMessage());
 }
 ```
@@ -805,15 +810,15 @@ try {
 ### Работа с контактами
 
 ```php
-use AmoCRM\{AmoAPI, AmoContact, AmoAPIException};
+use Kommo\{KommoAPI, KommoContact, KommoAPIException};
 
 try {
     // Авторизация
     $subdomain = 'testsubdomain';
-    AmoAPI::oAuth2($subdomain);
+    KommoAPI::oAuth2($subdomain);
 
     // Загрузка ВСЕХ контактов с возможностью фильтрации
-    $generator = AmoAPI::getAllContacts([
+    $generator = KommoAPI::getAllContacts([
         'query' => 'Ганс'
     ]);
     foreach ($generator as $items) {
@@ -823,7 +828,7 @@ try {
     }
 
     // Загрузка контактов с возможностью фильтрации и постраничной выборки
-    $items = AmoAPI::getContacts([
+    $items = KommoAPI::getContacts([
         'limit_rows'   => 100,
         'limit_offset' => 1000
     ]);
@@ -834,7 +839,7 @@ try {
     // -------------------------------------------------------------------------
 
     // Создание нового контакта
-    $contact1 = new AmoContact([
+    $contact1 = new KommoContact([
         'name'                => 'Ганс-Дитрих Геншер',
         'responsible_user_id' => 12345678
     ]);
@@ -856,7 +861,7 @@ try {
     $contact1Id = $contact1->save();
 
     // Обновление существующего контакта и получение ответа сервера amoCRM
-    $contact2 = new AmoContact([
+    $contact2 = new KommoContact([
         'id'         => 12300344,
         'name'       => 'Улоф Йоаким Пальме'
     ]);
@@ -865,7 +870,7 @@ try {
     print_r($contact1->save($returnResponse = true));
 
     // Пакетное добавление и/или обновление контактов
-    $items = AmoAPI::saveObjects([ $contact1, $contact2 ]);
+    $items = KommoAPI::saveObjects([ $contact1, $contact2 ]);
     foreach ($items as $item) {
         print_r($item);
     }
@@ -873,7 +878,7 @@ try {
     // -------------------------------------------------------------------------
 
     // Заполнение модели контакта по ID контакта
-    $contact3 = new AmoContact();
+    $contact3 = new KommoContact();
     $contact3->fillById(12345679);
 
     // Получение всех дополнительных полей контакта
@@ -916,20 +921,20 @@ try {
 
     // -------------------------------------------------------------------------
 
-    $items = AmoAPI::getContacts([
+    $items = KommoAPI::getContacts([
         'responsible_user_id' => 12373452
     ]);
 
     // Пакетная привязка сделки к контактам
     $contacts = [];
     foreach ($items as $item) {
-        $contacts[] = (new AmoContact($item))->addLeads(12380925);
+        $contacts[] = (new KommoContact($item))->addLeads(12380925);
     }
 
     // Пакетное сохранение контактов
-    AmoAPI::saveObjects($contacts);
+    KommoAPI::saveObjects($contacts);
 
-} catch (AmoAPIException $e) {
+} catch (KommoAPIException $e) {
     printf('Ошибка (%d): %s' . PHP_EOL, $e->getCode(), $e->getMessage());
 }
 ```
@@ -938,15 +943,15 @@ try {
 ### Работа с компаниями
 
 ```php
-use AmoCRM\{AmoAPI, AmoCompany, AmoAPIException};
+use Kommo\{KommoAPI, KommoCompany, KommoAPIException};
 
 try {
     // Авторизация
     $subdomain = 'testsubdomain';
-    AmoAPI::oAuth2($subdomain);
+    KommoAPI::oAuth2($subdomain);
 
     // Загрузка ВСЕХ компаний с возможностью фильтрации
-    $generator = AmoAPI::getAllCompanies([
+    $generator = KommoAPI::getAllCompanies([
         'query'        => 'OOO',
         'limit_offset' => 12000        
     ]);
@@ -957,7 +962,7 @@ try {
     }
 
     // Загрузка компаний с возможностью фильтрации и постраничной выборки
-    $items = AmoAPI::getCompanies([
+    $items = KommoAPI::getCompanies([
         'responsible_user_id' => 12357492,
         'limit_rows'          => 250,
         'limit_offset'        => 1000
@@ -969,7 +974,7 @@ try {
     // -------------------------------------------------------------------------
 
     // Создание новой компании
-    $company1 = new AmoCompany([
+    $company1 = new KommoCompany([
         'name'                => 'ООО МММ',
         'responsible_user_id' => 12358394,
     ]);
@@ -1003,7 +1008,7 @@ try {
     $companyId = $company1->save();
 
     // Обновление существующей компании и получение ответа сервера amoCRM
-    $company2 = new AmoCompany([
+    $company2 = new KommoCompany([
         'id'         => 12375435,
         'created_by' => 12396034,
         'name'       => 'ООО Рога и Копыта',
@@ -1011,7 +1016,7 @@ try {
     $response = $company2->save($returnResponse = true);
 
     // Пакетное добавление и/или обновление компаний
-    $items = AmoAPI::saveObjects([ $company1, $company2 ]);
+    $items = KommoAPI::saveObjects([ $company1, $company2 ]);
     foreach ($items as $item) {
         print_r($item);
     }
@@ -1019,7 +1024,7 @@ try {
     // -------------------------------------------------------------------------
 
     // Заполнение модели компании по ID
-    $company3 = new AmoCompany();
+    $company3 = new KommoCompany();
     $company3->fillById(12375435);
 
     // Получение всех параметров компании из модели
@@ -1042,20 +1047,20 @@ try {
 
     // -------------------------------------------------------------------------
 
-    $items = AmoAPI::getCompanies([
+    $items = KommoAPI::getCompanies([
         'responsible_user_id' => 12358394
     ]);
 
     // Пакетная привязка сделки к компаниям
     $companies = [];
     foreach ($items as $item) {
-        $companies[] = (new AmoCompany($item))->addLeads([ 12380925 ]);
+        $companies[] = (new KommoCompany($item))->addLeads([ 12380925 ]);
     }
 
     // Пакетное сохранение компаний
-    AmoAPI::saveObjects($companies);
+    KommoAPI::saveObjects($companies);
 
-} catch (AmoAPIException $e) {
+} catch (KommoAPIException $e) {
     printf('Ошибка (%d): %s' . PHP_EOL, $e->getCode(), $e->getMessage());
 }
 ```
@@ -1067,15 +1072,15 @@ try {
 Для них используются [специальные методы](#%D0%A0%D0%B0%D0%B1%D0%BE%D1%82%D0%B0-%D1%81-%D0%B7%D0%B0%D1%8F%D0%B2%D0%BA%D0%B0%D0%BC%D0%B8-%D0%B8%D0%B7-%D0%BD%D0%B5%D1%80%D0%B0%D0%B7%D0%BE%D0%B1%D1%80%D0%B0%D0%BD%D0%BD%D0%BE%D0%B3%D0%BE).
 
 ```php
-use AmoCRM\{AmoAPI, AmoLead, AmoAPIException};
+use Kommo\{KommoAPI, KommoLead, KommoAPIException};
 
 try {
     // Авторизация
     $subdomain = 'testsubdomain';
-    AmoAPI::oAuth2($subdomain);
+    KommoAPI::oAuth2($subdomain);
 
     // Загрузка ВСЕХ сделок с возможностью фильтрации
-    $generator = AmoAPI::getAllLeads([
+    $generator = KommoAPI::getAllLeads([
         'responsible_user_id' => 12357492
     ]);
     foreach ($generator as $items) {
@@ -1085,7 +1090,7 @@ try {
     }
 
     // Загрузка сделок с возможностью фильтрации и постраничной выборки
-    $items = AmoAPI::getLeads([
+    $items = KommoAPI::getLeads([
         'limit_rows'          => 250,
         'limit_offset'        => 2000
     ]);
@@ -1096,7 +1101,7 @@ try {
     // -------------------------------------------------------------------------
 
     // Создание новой сделки
-    $lead1 = new AmoLead([
+    $lead1 = new KommoLead([
         'name'                => 'Заказ № 964023',
         'responsible_user_id' => 12358394,
         'pipeline'            => [ 'id' => 45232121 ],
@@ -1131,14 +1136,14 @@ try {
     $leadId = $lead1->save();
 
     // Обновление существующей компании и получение ответа сервера amoCRM
-    $lead2 = new AmoLead([
+    $lead2 = new KommoLead([
         'id'         => 123057838,
         'sale'       => 175000
     ]);
     $response = $lead2->save($returnResponse = true);
 
     // Пакетное добавление и/или обновление сделок
-    $items = AmoAPI::saveObjects([ $lead1, $lead2 ]);
+    $items = KommoAPI::saveObjects([ $lead1, $lead2 ]);
     foreach ($items as $item) {
         print_r($item);
     }
@@ -1146,7 +1151,7 @@ try {
     // -------------------------------------------------------------------------
 
     // Заполнение модели сделки по ID
-    $lead3 = new AmoLead();
+    $lead3 = new KommoLead();
     $lead3->fillById(12328958);
 
     // Отвязка контакта от сделки
@@ -1172,20 +1177,20 @@ try {
 
     // -------------------------------------------------------------------------
 
-    $leads = AmoAPI::getLeads([
+    $leads = KommoAPI::getLeads([
         'responsible_user_id' => 12358394
     ]);
 
     // Пакетная привязка компании к сделкам
     $leads = [];
     foreach ($items as $item) {
-        $leads[] = (new AmoLead($item))->addCompany(12380925);
+        $leads[] = (new KommoLead($item))->addCompany(12380925);
     }
 
     // Пакетное сохранение сделок
-    AmoAPI::saveObjects($leads);
+    KommoAPI::saveObjects($leads);
 
-} catch (AmoAPIException $e) {
+} catch (KommoAPIException $e) {
     printf('Ошибка (%d): %s' . PHP_EOL, $e->getCode(), $e->getMessage());
 }
 ```
@@ -1194,17 +1199,17 @@ try {
 ### Работа с событиями
 
 ```php
-use AmoCRM\{AmoAPI, AmoNote, AmoAPIException};
+use Kommo\{KommoAPI, KommoNote, KommoAPIException};
 
 try {
     // Авторизация
     $subdomain = 'testsubdomain';
-    AmoAPI::oAuth2($subdomain);
+    KommoAPI::oAuth2($subdomain);
 
     // Загрузка ВСЕХ событий, привязанных к сделкам, с возможностью фильтрации
-    $generator = AmoAPI::getAllNotes([
+    $generator = KommoAPI::getAllNotes([
         'type'       => 'lead',
-        'note_type'  => AmoNote::COMMON_NOTETYPE
+        'note_type'  => KommoNote::COMMON_NOTETYPE
     ]);
     foreach ($generator as $items) {
         foreach ($items as $item) {
@@ -1213,7 +1218,7 @@ try {
     }
 
     // Загрузка событий, привязанных к контактам, с возможностью фильтрации и постраничной выборки
-    $items = AmoAPI::getLeads([
+    $items = KommoAPI::getLeads([
         'type'           => 'contact',
         'limit_rows'     => 250,
         'limit_offset'   => 2000
@@ -1225,10 +1230,10 @@ try {
     // -------------------------------------------------------------------------
     
     // Создание нового события типа "обычное примечание", привязанного к сделке
-    $note = new AmoNote([
+    $note = new KommoNote([
         'element_id'   => 12328687,
-        'note_type'    => AmoNote::COMMON_NOTETYPE,
-        'element_type' => AmoNOTE::LEAD_TYPE,
+        'note_type'    => KommoNote::COMMON_NOTETYPE,
+        'element_type' => KommoNote::LEAD_TYPE,
         'text'         => 'Текст примечания к сделке'
     ]);
 
@@ -1236,13 +1241,13 @@ try {
     $noteId = $note->save();
 
     // Обновление существующего события
-    $note2 = new AmoNote([
+    $note2 = new KommoNote([
         'id'   => 12300958,
         'text' => 'Обновленный текст события'
     ]);
 
     // Заполнение модели события по ID и изменение текста события
-    $note3 = new AmoNote();
+    $note3 = new KommoNote();
     $note3->fillById(12347842);
     $note3->text = 'Новый тест события';
 
@@ -1250,9 +1255,9 @@ try {
     print_r($note3->getParams());
 
     // Пакетное сохранение событий
-    AmoAPI::saveObjects([ $note2, $note3 ]);
+    KommoAPI::saveObjects([ $note2, $note3 ]);
 
-} catch (AmoAPIException $e) {
+} catch (KommoAPIException $e) {
     printf('Ошибка (%d): %s' . PHP_EOL, $e->getCode(), $e->getMessage());
 }
 ```
@@ -1261,18 +1266,18 @@ try {
 ### Работа с задачами
 
 ```php
-use AmoCRM\{AmoAPI, AmoTask, AmoAPIException};
+use Kommo\{KommoAPI, KommoTask, KommoAPIException};
 
 try {
     // Авторизация
     $subdomain = 'testsubdomain';
-    AmoAPI::oAuth2($subdomain);
+    KommoAPI::oAuth2($subdomain);
 
     // Загрузка ВСЕХ задач, привязанных к сделкам, с возможностью фильтрации
-    $generator = AmoAPI::getAllTasks([
+    $generator = KommoAPI::getAllTasks([
         'type'   => 'lead',
         'filter' => [
-            'task_type' => [ AmoTask::CALL_TASKTYPE, AmoTask::MAIL_TASKTYPE ]
+            'task_type' => [ KommoTask::CALL_TASKTYPE, KommoTask::MAIL_TASKTYPE ]
         ]
     ]);
     foreach ($generator as $items) {
@@ -1282,7 +1287,7 @@ try {
     }
 
     // Загрузка задач, с возможностью фильтрации и постраничной выборки
-    $items = AmoAPI::getTasks([
+    $items = KommoAPI::getTasks([
         'responsible_user_id' => 12381202,
         'limit_rows'          => 100,
         'limit_offset'        => 800
@@ -1294,9 +1299,9 @@ try {
     // -------------------------------------------------------------------------
 
     // Создание новой задачи типа "написать письмо", привязанной к контакту
-    $task = new AmoTask([
-        'task_type'        => AmoTASK::MAIL_TASKTYPE,
-        'element_type'     => AmoTask::CONTACT_TYPE,
+    $task = new KommoTask([
+        'task_type'        => KommoTask::MAIL_TASKTYPE,
+        'element_type'     => KommoTask::CONTACT_TYPE,
         'element_id'       => 12367433,
         'text'             => 'Необходимо написать письмо',
         'complete_till_at' => 1508706000
@@ -1306,7 +1311,7 @@ try {
     $taskId = $task->save();
 
     // Обновление существующей задачи
-    $task2 = new AmoTask([
+    $task2 = new KommoTask([
         'id'   => 12311954,
         'text' => 'Обновленный текст задачи'
     ]);
@@ -1315,7 +1320,7 @@ try {
     $task2->addLead(12389536);
 
     // Заполнение модели задачи по ID и изменение текста задачи
-    $task3 = new AmoTask();
+    $task3 = new KommoTask();
     $task3->fillById(12327872);
     $task3->text = 'Новый тест события';
 
@@ -1323,31 +1328,32 @@ try {
     print_r($task3->getParams());
 
     // Пакетное сохранение задач
-    AmoAPI::saveObjects([ $task2, $task3 ]);
+    KommoAPI::saveObjects([ $task2, $task3 ]);
 
-} catch (AmoAPIException $e) {
+} catch (KommoAPIException $e) {
     printf('Ошибка (%d): %s' . PHP_EOL, $e->getCode(), $e->getMessage());
 }
 ```
 
 <a id="%D0%A0%D0%B0%D0%B1%D0%BE%D1%82%D0%B0-%D1%81%D0%BE-%D1%81%D0%BF%D0%B8%D1%81%D0%BA%D0%B0%D0%BC%D0%B8-%D0%BA%D0%B0%D1%82%D0%B0%D0%BB%D0%BE%D0%B3%D0%B0%D0%BC%D0%B8"></a>
 ### Работа со списками (каталогами)
+
 ```php
-use AmoCRM\{AmoAPI, AmoCatalog, AmoAPIException};
+use Kommo\{KommoAPI, KommoCatalog, KommoAPIException};
 
 try {
     // Авторизация
     $subdomain = 'testsubdomain';
-    AmoAPI::oAuth2($subdomain);
+    KommoAPI::oAuth2($subdomain);
 
     // Загрузка перечня списков с возможностью фильтрации
-    $items = AmoAPI::getCatalogs();
+    $items = KommoAPI::getCatalogs();
     foreach ($items as $item) {
         print_r($item);
     }
 
     // Создание нового списка
-    $catalog = new AmoCatalog([
+    $catalog = new KommoCatalog([
         'name' => 'Товары на складе'
     ]);
 
@@ -1355,13 +1361,13 @@ try {
     $catalogId = $catalog->save();
 
     // Обновление существующего списка
-    $catalog2 = new AmoCatalog([
+    $catalog2 = new KommoCatalog([
         'id'   => 7185,
         'name' => 'Не товары'
     ]);
 
     // Заполнение модели списка по ID и изменение названия списка 
-    $catalog3 = new AmoCatalog();
+    $catalog3 = new KommoCatalog();
     $catalog3->fillById(7187);
     $catalog3->name = 'Актуальные товары';
 
@@ -1369,12 +1375,12 @@ try {
     print_r($catalog3->getParams());
 
     // Пакетное сохранение списков
-    AmoAPI::saveObjects([ $catalog2, $catalog3 ]);
+    KommoAPI::saveObjects([ $catalog2, $catalog3 ]);
 
     // Пакетное удаление списков
-    AmoAPI::deleteObjects([ $catalog2, $catalog3 ]);
+    KommoAPI::deleteObjects([ $catalog2, $catalog3 ]);
 
-} catch (AmoAPIException $e) {
+} catch (KommoAPIException $e) {
     printf('Ошибка (%d): %s' . PHP_EOL, $e->getCode(), $e->getMessage());
 }
 ```
@@ -1383,15 +1389,15 @@ try {
 ### Работа с элементами списков (каталогов)
 
 ```php
-use AmoCRM\{AmoAPI, AmoCatalogElement, AmoAPIException};
+use Kommo\{KommoAPI, KommoCatalogElement, KommoAPIException};
 
 try {
     // Авторизация
     $subdomain = 'testsubdomain';
-    AmoAPI::oAuth2($subdomain);
+    KommoAPI::oAuth2($subdomain);
 
     // Загрузка ВСЕХ элементов заданного списка с возможностью фильтрации
-    $generator = AmoAPI::getAllCatalogElements([
+    $generator = KommoAPI::getAllCatalogElements([
         'catalog_id' => 4422,
         'term'   => 'Маркер'
     ]);
@@ -1402,7 +1408,7 @@ try {
     }
 
     // Загрузка элементов заданного списка с фильтрацией с постраничной выборкой
-    $items = AmoAPI::getCatalogElements([
+    $items = KommoAPI::getCatalogElements([
         'catalog_id' => 4422,
         'term'       => 'Фломастер',
         'page'       => 21
@@ -1414,7 +1420,7 @@ try {
     // -------------------------------------------------------------------------
 
     // Создание нового элемента каталога
-    $element = new AmoCatalogElement([
+    $element = new KommoCatalogElement([
         'catalog_id' => 4422,
         'name'       => 'Ручка гелевая'
     ]);
@@ -1429,13 +1435,13 @@ try {
     $elementId = $element->save();
 
     // Обновление существующего элемента списка
-    $element2 = new AmoCatalogElement([
+    $element2 = new KommoCatalogElement([
         'id'   => 12312312,
         'text' => 'Ручка перьевая'
     ]);
 
     // Заполнение модели элемента списка по ID и изменение имени элемента
-    $element3 = new AmoCatalogElement();
+    $element3 = new KommoCatalogElement();
     $element3->fillById(12398096);
     $element3->name = 'Карандаш';
 
@@ -1443,12 +1449,12 @@ try {
     print_r($element3->getParams());
 
     // Пакетное сохранение элементов
-    AmoAPI::saveObjects([ $element2, $element3 ]);
+    KommoAPI::saveObjects([ $element2, $element3 ]);
 
     // Пакетное удаление элементов
-    AmoAPI::deleteObjects([ $element2, $element3 ]);
+    KommoAPI::deleteObjects([ $element2, $element3 ]);
 
-} catch (AmoAPIException $e) {
+} catch (KommoAPIException $e) {
     printf('Ошибка (%d): %s' . PHP_EOL, $e->getCode(), $e->getMessage());
 }
 ```
@@ -1457,32 +1463,32 @@ try {
 ### Работа с webhooks
 
 ```php
-use AmoCRM\{AmoAPI, AmoAPIException};
+use Kommo\{KommoAPI, KommoAPIException};
 
 try {
 
     // Авторизация
     $subdomain = 'subdomain';
-    AmoAPI::oAuth2($subdomain);
+    KommoAPI::oAuth2($subdomain);
 
     // Получаем список установленных webhooks
-    $webhooks = AmoAPI::getWebhooks();
+    $webhooks = KommoAPI::getWebhooks();
     print_r($webhooks);
 
     // Добавляем webhook
-    AmoAPI::addWebhooks([
+    KommoAPI::addWebhooks([
         'url'    => 'https://example.com/webhook/',
         'events' => [ 'add_lead' ]
     ]);
 
     // Удаляем webhook
-    AmoAPI::deleteWebhooks([
+    KommoAPI::deleteWebhooks([
         'url'    => 'https://example.com/webhook/',
         'events' => [ 'add_lead' ]
     ]);
 
     // Добавляем несколько webhooks
-    AmoAPI::addWebhooks([
+    KommoAPI::addWebhooks([
         [
             'url'    => 'https://example1.com/webhook/',
             'events' => [ 'add_lead' ]
@@ -1494,7 +1500,7 @@ try {
     ]);
 
     // Удаляем несколько webhooks
-    AmoAPI::deleteWebhooks([
+    KommoAPI::deleteWebhooks([
         [
             'url'    => 'https://example1.com/webhook/',
             'events' => [ 'add_lead' ]
@@ -1505,7 +1511,7 @@ try {
         ]
     ]);
 
-} catch (AmoAPIException $e) {
+} catch (KommoAPIException $e) {
     printf('Ошибка (%d): %s' . PHP_EOL, $e->getCode(), $e->getMessage());
 }
 ```
@@ -1518,17 +1524,18 @@ try {
 > Изначально неразобранное было в отдельном хранилище и являлось отдельной сущностью именно поэтому до сих пор в интерфейсах amoCRM и в API есть особенности которые отличают поведение сделки в статусе Неразобранное от сделок в других статусах.
 
 Пример работы с заявками из неразобранного при добавлении из веб-формы.
+
 ```php
-use AmoCRM\{AmoAPI, AmoLead, AmoContact, AmoIncomingLeadForm, AmoAPIException};
+use Kommo\{KommoAPI, KommoLead, KommoContact, KommoIncomingLeadForm, KommoAPIException};
 
 try {
 
     // Авторизация
     $subdomain = 'testsubdomain';
-    AmoAPI::oAuth2($subdomain);
+    KommoAPI::oAuth2($subdomain);
 
     // Создаем новую заявку в неразобранном при добавлении из веб-формы
-    $incomingLead = new AmoIncomingLeadForm();
+    $incomingLead = new KommoIncomingLeadForm();
 
     // Устанавливаем обязательные параметры 
     $incomingLead->setIncomingLeadInfo([
@@ -1538,14 +1545,14 @@ try {
     ]);
 
     // Добавляем параметры сделки
-    $lead = new AmoLead([
+    $lead = new KommoLead([
         'name' => 'Новая заявка с сайта'
     ]);
     $lead->setCustomFields([ 25475362 => '#1543252' ]);
     $incomingLead->addIncomingLead($lead);
 
     // Добавляем параметры контакта
-    $contact = new AmoContact([
+    $contact = new KommoContact([
        'name' => 'Ганс-Дитрих Геншер'
     ]);
     $contact->setCustomFields([
@@ -1566,18 +1573,18 @@ try {
     ]);
 
     // Сохраняем заявку
-    AmoAPI::saveIncomingObjects($incomingLead);
+    KommoAPI::saveIncomingObjects($incomingLead);
 
     // ------------------------------------------------------------------------
 
     // Получаем заявку из неразобранного по UID
     $uid = 'f03c796fb5455667e648dd0ec9755fc9680bc3775ac76a540753d249d455';
-    $incomingLead2 = new AmoIncomingLeadForm();
+    $incomingLead2 = new KommoIncomingLeadForm();
     $incomingLead2->fillByUid($uid);
     print_r($incomingLead2->getParams());
 
     // Загрузка ВСЕХ заявок из неразобранного с фильтрацией по категории
-    $generator = AmoAPI::getAllIncomingLeads([
+    $generator = KommoAPI::getAllIncomingLeads([
         'categories'   => [ 'forms' ]
     ]);
     foreach ($generator as $items) {
@@ -1589,7 +1596,7 @@ try {
     // ------------------------------------------------------------------------
 
     // Принимаем заявки из неразобранного
-    AmoAPI::acceptIncomingLeads([
+    KommoAPI::acceptIncomingLeads([
         'accept' => [
             'f03c796fb5455667e648dd0ec9755fc9680bc3775ac76a540753d249d455',
             'a12c723fb54556676e6487d0e89795fc9080bc3975ac86a548752302d478',
@@ -1599,12 +1606,12 @@ try {
     ]);
 
     // Отклоняем заявки из неразобранного
-    AmoAPI::declineIncomingLeads([
+    KommoAPI::declineIncomingLeads([
       'decline' => [ 'e21c796dfb5sd566de648ccb80ec546a4d25e4baecbd343actf0b3ed4363c4' ],
       'user_id' => 13752426
     ]);
 
-} catch (AmoAPIException $e) {
+} catch (KommoAPIException $e) {
     printf('Ошибка (%d): %s' . PHP_EOL, $e->getCode(), $e->getMessage());
 }
 ```
@@ -1615,13 +1622,13 @@ try {
 Метод `\AmoCRM\AmoAPI::request()` позволяет выполнять AJAX-запросы к frontend-методам.
 
 ```php
-use AmoCRM\{AmoAPI, AmoAPIException};
+use Kommo\{KommoAPI, KommoAPIException};
 
 try {
 
     // Авторизация
     $subdomain = 'testsubdomain';
-    AmoAPI::oAuth2($subdomain);
+    KommoAPI::oAuth2($subdomain);
 
     $params = [
         'filter' => [
@@ -1638,11 +1645,11 @@ try {
         'page' => 1
     ];
 
-    $data = AmoAPI::request('/ajax/contacts/list', 'AJAX', $params);
+    $data = KommoAPI::request('/ajax/contacts/list', 'AJAX', $params);
 
     print_r($data);    
 
-} catch (AmoAPIException $e) {
+} catch (KommoAPIException $e) {
     printf('Ошибка (%d): %s' . PHP_EOL, $e->getCode(), $e->getMessage());
 }
 ````
@@ -1707,41 +1714,41 @@ try {
 ### Работа с несколькими поддоменами
 
 ```php
-use AmoCRM\{AmoAPI, AmoCompany, AmoAPIException};
+use Kommo\{KommoAPI, KommoCompany, KommoAPIException};
 
 try {
     // Авторизация в поддомене 1
     // ...
-    AmoAPI::oAuth2($subdomain1, $clientId1, $clientSecret1, $redirectUri1, $authCode1);
+    KommoAPI::oAuth2($subdomain1, $clientId1, $clientSecret1, $redirectUri1, $authCode1);
 
     // Авторизация в поддомене 2
     // ...
-    AmoAPI::oAuth2($subdomain2, $clientId2, $clientSecret2, $redirectUri2, $authCode2);
+    KommoAPI::oAuth2($subdomain2, $clientId2, $clientSecret2, $redirectUri2, $authCode2);
 
     // Загрузка компаний из поддомена 1
-    $items1 = AmoAPI::getCompanies([
+    $items1 = KommoAPI::getCompanies([
         'responsible_user_id' => 12357492
     ], $subdomain1);
 
     // Загрузка всех компаний из поддомена 2
-    $generator2 = AmoAPI::getAllCompanies([
+    $generator2 = KommoAPI::getAllCompanies([
         'query' => 'OOO'
     ], $subdomain2);
 
     // Создание новой компании для поддомена 1
-    $company1 = new AmoCompany([
+    $company1 = new KommoCompany([
         'name' => 'ООО Абракадабра',
     ], $subdomain1);
 
     // Обновление существующей компании для поддомена 1
-    $company2 = new AmoCompany([], $subdomain1);
+    $company2 = new KommoCompany([], $subdomain1);
     $company2->fillById(12389423);
     $company2->name = 'OOO Розенталь';
 
     // Пакетное сохранение компаний для поддомена 1
-    AmoAPI::saveObjects([ $company1, $company2 ], $subomain1);
+    KommoAPI::saveObjects([ $company1, $company2 ], $subomain1);
 
-} catch (AmoAPIException $e) {
+} catch (KommoAPIException $e) {
     printf('Ошибка (%d): %s' . PHP_EOL, $e->getCode(), $e->getMessage());
 }
 ```
@@ -1750,20 +1757,20 @@ try {
 ### Отладка и логирование
 
 ```php
-use AmoCRM\{AmoAPI, AmoAPIDebugLogger, AmoAPIException};
+use Kommo\{KommoAPI, KommoAPIDebugLogger, KommoAPIException};
 
 try {
     // Включение вывода запросов/ответов к API в STDOUT
-    AmoAPI::$debug = true;
+    KommoAPI::$debug = true;
 
     // Включение логирования запросов/ответов к API в файл
-    AmoAPI::$debugLogger = new AmoAPIDebugLogger($logFile = 'logs/debug_amocrm_api.log');
+    KommoAPI::$debugLogger = new KommoAPIDebugLogger($logFile = 'logs/debug_amocrm_api.log');
 
     // Авторизация
     $subdomain = 'testsubdomain';
-    AmoAPI::oAuth2($subdomain);
+    KommoAPI::oAuth2($subdomain);
 
-} catch (AmoAPIException $e) {
+} catch (KommoAPIException $e) {
     printf('Ошибка (%d): %s' . PHP_EOL, $e->getCode(), $e->getMessage());
 }
 ```

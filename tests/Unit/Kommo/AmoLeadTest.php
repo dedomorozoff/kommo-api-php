@@ -2,22 +2,22 @@
 
 declare(strict_types=1);
 
-namespace Tests\Unit\AmoCRM;
+namespace Tests\Unit\Kommo;
 
 use PHPUnit\Framework\TestCase;
-use AmoCRM\AmoLead;
+use Kommo\KommoLead;
 
 class AmoLeadTest extends TestCase
 {
     /**
-     * @var AmoLead
+     * @var KommoLead
      */
     private $amoLead;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
-        $this->amoLead = new AmoLead();
+        $this->amoLead = new KommoLead();
     }
 
     // addContacts() tests
