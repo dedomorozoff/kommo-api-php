@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tests\Unit\AmoCRM;
+namespace Tests\Unit\Kommo;
 
 use PHPUnit\Framework\TestCase;
 use Kommo\KommoLead;

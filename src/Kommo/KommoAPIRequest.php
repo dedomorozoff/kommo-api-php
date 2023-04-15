@@ -88,13 +88,13 @@ trait KommoAPIRequest
      * Домен amoCRM для запросов к API
      * @var string
      */
-    public static $amoDomain = 'amocrm.ru';
+    public static $amoDomain = 'kommo.com';
 
     /**
      * UserAgent в запросах к API
      * @var string
      */
-    public static $amoUserAgent = 'amoCRM-API-client/2.0';
+    public static $amoUserAgent = 'Kommo-API-client/2.0';
 
     /**
      * Таймаут соединения с сервером аmoCRM, секунды

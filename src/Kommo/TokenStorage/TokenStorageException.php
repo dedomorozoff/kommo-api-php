@@ -29,6 +29,6 @@ class TokenStorageException extends Exception
      */
     public function __construct(string $message = '', $code = 0, Exception $previous = null)
     {
-        parent::__construct("AmoCRM TokenStorage: " . $message, $code, $previous);
+        parent::__construct("Kommo TokenStorage: " . $message, $code, $previous);
     }
 }
