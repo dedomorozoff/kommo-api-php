@@ -1,4 +1,6 @@
-# amoCRM API PHP Wrapper
+# Kommo API PHP Wrapper
+
+Основано на
 
 ![amoCRM logo](./assets/amocrm-logo.png)  
 
